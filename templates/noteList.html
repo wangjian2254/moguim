@@ -1,0 +1,50 @@
+{% extends "templates/basepage.html" %}
+{% block navigator %}
+<a  href="#" >群管理</a>
+ >> <a href="/CreateNoteM">添加帖子</a> >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<table id="contentList"    border="0" cellpadding=1 cellspacing=1 bgcolor="#D5E3E6" >
+    {% if isadmin %}
+<tr bgcolor="#ffffff" height="25">
+	<td colspan="11" align="center">
+		<form action="/NoteListM" method="post"> <input type="radio" name="type" value="username" checked>用户名<input type="radio" name="type" value="groupid">群号<input type="radio" name="type" value="noteid">帖子号  查询：<input type="text" name="value" size="25" > <input type="submit" value="提交"></form>
+	</td>
+</tr>
+    {%endif%}
+<tr bgcolor="#ffffff"  height="25">
+<td width="80px"  align="center">帖子号</td>
+		<td width="200px" align="center">标题</td>
+		<td width="80px" align="center">作者</td>
+		<td width="80px" align="center">群id</td>
+		<td width="80px" align="center">顶</td>
+		<td width="80px" align="center">踩</td>
+		<td width="80px" align="center">积分</td>
+		<td width="100px" align="center">是否置顶</td>
+    {% if isadmin %}
+		<td width="100px" align="center">是否删除</td>
+    {%endif%}
+<td width="80px;" align="center">操作</td>
+</tr>
+{% for content in list%}
+    {%if content.isDelete==False%}
+<tr style="cursor:hand"  height="25"   onmouseover="cells_color(this,1);" onMouseOut="cells_color(this,2);" bgcolor="#ffffff">
+<td align="center">{{content.key().id()}}</td>
+<td align="left"><a href="/CreateNoteM?Noteid={{content.key().id()}}">{{content.title|striptags}}</a></td>
+<td><a href="/NoteListM?type=username&value={{content.author}}"> {{content.author}}</a></td>
+<td>{{content.groupobj.name|striptags}}</td>
+<td align="center">{{content.up}}</td>
+<td align="center">{{content.down}}</td>
+<td align="center">{{content.point}}</td>
+<td align="center">{%if content.groupobj.type==1%}<a href="/TopNoteM?Noteid={{content.key().id()}}&DoMod={%if content.isTop%}notdo{%else%}do{%endif%}"> {{content.isTop}}</a>{%else%}{{content.isTop}}{%endif%}</td>
+{% if isadmin %}
+<td align="center">{{content.isDelete}}</td>
+{%endif%}
+<td >{% if not content.isDelete %}<a href="/CreateNoteM?Noteid={{content.key().id()}}">修改</a>&nbsp;&nbsp;&nbsp;|<a href="/DelNoteM?Noteid={{content.key().id()}}">删除</a>{%endif%}
+</td>
+</tr>
+    {%endif%}
+{%endfor%}
+
+</table>
+{% endblock %}

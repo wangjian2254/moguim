@@ -1,0 +1,33 @@
+{% extends "templates/basepage.html" %}
+{% block navigator %}
+<a  href="#" >群管理</a>
+ >> <a href="/daTingNote">添加大厅帖子</a> >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<table id="contentList"    border="0" cellpadding=1 cellspacing=1 bgcolor="#D5E3E6" >
+<tr bgcolor="#ffffff"  height="25">
+		<td width="200px" align="center">标题</td>
+		<td width="80px" align="center">作者</td>
+		<td width="80px" align="center">群</td>
+		<td width="80px" align="center">发布时间</td>
+		<td width="80px" align="center">是否显示</td>
+        <td width="80px;" align="center">操作</td>
+</tr>
+{% for content in datingNoteList%}
+<tr style="cursor:hand"  height="25"   onmouseover="cells_color(this,1);" onMouseOut="cells_color(this,2);" bgcolor="#ffffff">
+<td align="left"><a href="/daTingNote?Noteid={{content.key().id()}}">{{content.title|striptags}}</a></td>
+<td> {{content.author}}</td>
+<td>{{content.groupobj.name|striptags}}({{content.group}})</td>
+<td align="center">{{content.updateTime}}</td>
+{% if content.isPub %}
+<td align="center" style="color: red;">已发布</td>
+{%else%}
+<td align="center">不发布</td>
+{%endif%}
+<td >{% if not content.isDelete %}<a href="/daTingNote?Noteid={{content.key().id()}}">修改</a>&nbsp;&nbsp;&nbsp;|<a href="/daTingNoteDel?id={{content.key().id()}}">删除</a>{%endif%}
+</td>
+</tr>
+{%endfor%}
+
+</table>
+{% endblock %}

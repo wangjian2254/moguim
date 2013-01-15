@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="/css/css.css" rel="stylesheet" type="text/css">
+	<script language="javascript" src="/js/menu.js"></script>
+
+	
+	<script>
+	function closeMenus() {
+		Expand()
+		//Toggle('serversettings');
+		//Toggle('dataservices');
+		
+	}
+	function highlightLink(clickedLink) {
+		menuitemArray = document.getElementsByName('menuitem');
+		for (i=0;i<menuitemArray.length;i++) {
+			if (menuitemArray[i].className == 'leftMenuLinkTextHighlighted')
+				menuitemArray[i].className='leftMenuLinkText';
+		}
+		clickedLink.className='leftMenuLinkTextHighlighted';
+		//alert(frames.parent.frames['content'].location);
+	}
+	var highlightTimeout;
+	function highlightLinkOnload() {
+		// if the frame hasn't loaded yet (firefox issue)... keep calling the same function every second until it does and then clear the timeout
+		if (frames.parent.frames['mainFrame'].location == 'about:blank') {
+			highlightTimeout = setTimeout("highlightLinkOnload()",1000);// keep calling while it's blank...
+		} else {
+			clearTimeout(highlightTimeout);
+		}
+		menuitemArray = document.getElementsByName('menuitem');
+		for (i=0;i<menuitemArray.length;i++) {
+			if (frames.parent.frames['mainFrame'].location.toString().split('?')[0] == menuitemArray[i].href) {
+				menuitemArray[i].className='leftMenuLinkTextHighlighted';
+				if (menuitemArray[i].getAttribute('menuitemparent')!= 'management')
+					Toggle(menuitemArray[i].getAttribute('menuitemparent'));
+			}
+		}
+	}
+	</script>
+
+</head>
+
+
+<body style="background: #ececec url('/image/navframebackground.png') repeat-y;" onLoad="closeMenus();">
+
+<style>
+	h2{font-size: 1em;	}
+</style>
+
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+  <tr>
+	<td rowspan="3"><img src="/image/spacer.gif" alt="" width="10" height="10"></td>
+	<td>&nbsp;</td>
+	<td rowspan="3"><img src="/image/spacer.gif" alt="" width="5" height="10"></td>
+  </tr>
+  <tr>
+	<td>
+			<table border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+				<td><img src="/image/spacer.gif" alt="" width="10" height="10"></td>
+			  </tr>
+			</table>
+		
+		<table class="menuBody">
+			  <tr>
+				<td class="menuTD" style="font-size:10px;">
+
+					<a class="leftMenuLinkText" style="font-size:10px;" href="javascript:Expand();">
+展开
+<img src="/image/expandallicon.gif" alt="" width="12" height="12" border="0" align="texttop"></a> /
+					<a class="leftMenuLinkText" style="font-size:10px;" href="javascript:Collapse();">
+收缩
+<img src="/image/collapseallicon.gif" alt="" width="12" height="12" border="0" align="texttop"></a>
+				</td>
+			</tr>
+		</table>
+
+            <!-- group管理-->
+            <table class="menuHeader" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+
+						<td width="6"><img src="/image/cap_menuitem_topleft.png" width="6" alt="" height="5"></td>
+						<td width="100%" background="/image/cap_menuitem_topbackground.png" ><img src="/image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="/image/cap_menuitem_topright.png" alt="" width="6" height="5"></td>
+					</tr>
+					<tr>
+						<td class="menuTDHeaderLeft"><img src="/image/spacer.gif" alt="" width="1" height="5"></td>
+						<td width="100%" class="menuTDHeader">
+						<a id="xgroupsettings" href="javascript:Toggle('groupsettings');"><img src='/image/arrow_opened.gif'  width='10' height='10' hspace='0' vspace='0' border='0'></a><img src="/image/spacer.gif" alt="" width="5" height="5"><a id="xgroupsettings" href="javascript:Toggle('groupsettings');" class="menuheaderText">群管理</a>
+						</td>
+						<td class="menuTDHeaderRight">
+						<img src="/image/spacer.gif" alt="" width="1" height="5"></td>
+
+					</tr>
+					<tr>
+						<td width="6"><img src="/image/cap_menuitem_bottomleft.png" alt="" width="6" height="5"></td>
+						<td background="/image/cap_menuitem_bottombackground.png"><img src="/image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="/image/cap_menuitem_bottomright.png" alt="" width="6" height="5"></td>
+					</tr>
+				</table>
+				<div id="groupsettings">
+					<table class="menuBody" width="100%">
+                                <tr>
+                                    <td class="menuTD" width="13"></td>
+
+                                    <td class="menuTD">
+                                        <a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='groupsettings' href="{{groupuri}}/GroupListM">群列表</a></td>
+                                </tr>
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='groupsettings' href="{{groupuri}}/CreateGroupM">新增群</a></td>
+								</tr>
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='groupsettings' href="{{groupuri}}/RemoveGroupM">解散群</a></td>
+								</tr>
+
+                                
+                               <!-- <tr>
+									<td class="menuTD" width="13"></td>
+
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='groupsettings' href="{{groupuri}}/CreateNoteM">新建帖子</a></td>
+								</tr>
+                                <tr>
+									<td class="menuTD" width="13"></td>
+
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='groupsettings' href="{{groupuri}}/NoteListM">帖子列表</a></td>
+								</tr>-->
+                                <tr>
+									<td class="menuTD" width="13"></td>
+
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='groupsettings' href="{{groupuri}}/PutAdNote">管理我的广告贴</a></td>
+								</tr>
+                                <tr>
+									<td class="menuTD" width="13"></td>
+
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='groupsettings' href="{{groupuri}}/JingPai">竞拍广告贴</a></td>
+								</tr>
+                        <tr>
+                            <td class="menuTD" width="13"></td>
+
+                            <td class="menuTD">
+                                <a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='groupsettings' href="{{groupuri}}/daTingNote">添加大厅帖子</a></td>
+                        </tr>
+                                                <tr>
+                            <td class="menuTD" width="13"></td>
+
+                            <td class="menuTD">
+                                <a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='groupsettings' href="{{groupuri}}/daTingNoteList">大厅帖子列表</a></td>
+                        </tr>
+
+
+					</table>
+				</div>
+
+	</td>
+
+  </tr>
+</table>
+
+
+</body>
+
+</html>

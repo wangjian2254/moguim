@@ -1,0 +1,47 @@
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>蘑菇网数据维护系统</title>
+<link rel="stylesheet" href="css/hepu.css" type="text/css">
+<style type="text/css">
+<!--
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	background-color: #6c7a83;
+}
+a:link {
+	color: #FFFFFF;
+}
+a:visited {
+	color: #FFFFFF;
+}
+a:hover {
+	color: #FFFFFF;
+}
+.STYLE1 {color: #FFFFFF}
+-->
+</style></head>
+
+<body>
+<table width="100%" border="0" cellspacing="1" cellpadding="0">
+  <tr>
+    <td width="300" height="50"><font style="color:#ffffff;font-family:黑体;font-size:25;margin-left:30px;">蘑菇网数据维护系统</font></td>
+    <td  align="right"><table width="450" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td >
+		<h5 align="right"><span class="STYLE1">用户：{%if user.nickname!=None%}{{user.nickname}}{%endif%}({{username}})&nbsp;&nbsp;积分：{{userpoint.point}}&nbsp;&nbsp;<a href="/logout" target="_parent">退出系统</a> &nbsp;| </span></h5></td>
+        <td width="106">
+		<div align="center">
+		<img src="/image/detailsicon.gif" width="23" height="23">&nbsp;&nbsp;
+		<img src="/image/infoicon.gif" width="24" height="24">&nbsp;&nbsp;
+		<img src="/image/helpicon.gif" width="24" height="24">
+		</div></td>
+      </tr>
+    </table></td>
+  </tr>
+  
+</table>
+</body>
+</html>

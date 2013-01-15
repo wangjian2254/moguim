@@ -1,0 +1,62 @@
+{% extends "templates/basepage.html" %}
+{% block navigator %}
+<a  href="#" >广告贴管理</a>
+ >> <a href="#">添加广告贴</a> >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<form action="/PutAdNote" method="post" enctype="multipart/form-data">
+<table width="90%" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+
+                {%if adnote!=None%}
+                    <tr bgcolor="#ffffff" >
+                        <td>当前广告贴</td>
+                        <td></td>
+                    </tr>
+                <tr bgcolor="#ffffff" >
+                    <td>标题：</td>
+                    <td>{{adnote.title|striptags}}</td>
+                </tr>
+
+                <tr bgcolor="#ffffff" >
+                        <td>内容：</td>
+                        <td>{{adnote.content|striptags}}</td>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td>内容：</td>
+                    <td>
+                        {%for img in imglist%}
+                            {%if img!=None%}
+                                  {%if img.src%}<img src="{{img.src}}"/>{%else%}<img src="/downLoad?image_id={{img.key().id()}}"/> {%endif%}
+                            {%endif%}
+                        {%endfor%}
+                    </td>
+                </tr>
+                {%endif%}
+                <tr bgcolor="#ffffff" >
+                    <td>设置新广告贴</td>
+                    <td></td>
+                </tr>
+                    <tr bgcolor="#ffffff" >
+                        <td>标题：</td>
+                        <td><input type="text" name="NoteTitle" value="" style="width: 500px" ></td>
+                    </tr>
+                    <tr bgcolor="#ffffff" >
+                        <td>图片：</td>
+                        <td><input type="file" name="imgfile" style="width: 200px" value="上传" >(jpg、gif、png格式；图片最大1Mb)</td>
+                    </tr>
+                    <tr bgcolor="#ffffff" >
+                        <td>帖子内容：</td>
+                        <td><textarea name="NoteContent" style="width: 500px;height: 100px;"></textarea></td>
+                    </tr>
+                <tr bgcolor="#ffffff" >
+                    <td colspan="2"> <input type="submit" name="Submit" value="保存"/>
+	  <input type="reset" name="Reset" value="重置"/><input type="hidden" name="username" value="{{username}}" />
+	  <input type="button" name="Return" value="返回" onClick="javascript:history.back(-1);" /></td>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td colspan="2">{%if msg!=None%}<span style="color:red;">{{msg}}</span>{%endif%} </td>
+                </tr>
+</table>
+</form>
+
+{% endblock %}

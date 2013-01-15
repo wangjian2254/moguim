@@ -1,0 +1,59 @@
+{% extends "templates/basepage.html" %}
+{% block navigator %}
+<a  href="#" >广告贴管理</a>
+>> <a href="/PutAdNote">设置我的广告贴</a>>> <a href="#">竞拍广告贴</a> >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<form action="/JingPai" method="post">
+<table width="90%" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+
+
+                <tr bgcolor="#ffffff" height="25" >
+                    <td width="200">广告贴展示区间</td>
+                    <td></td>
+                </tr>
+                    <tr bgcolor="#ffffff"  height="25" >
+                        <td>开始时间：</td>
+                        <td>{{starttime}}</td>
+                    </tr>
+                    <tr bgcolor="#ffffff"  height="25" >
+                        <td>结束时间：</td>
+                        <td>{{endtime}}</td>
+                    </tr>
+                    {%if adnote!=None%}
+                    <tr bgcolor="#ffffff"  height="25" >
+                            <td>当前最高积分广告</td>
+                            <td>{{adnote.content}}<img src="/downLoad?image_id={{adnote.imgid}}" alt="" border="0"></td>
+                    </tr>
+                    <tr bgcolor="#ffffff"  height="25" >
+                            <td>竞拍用户</td>
+                            <td>{{paimai.user}}{%if paimai.user==username%}(当前登陆用户:{{username}}){%endif%}</td>
+                    </tr>
+                    {%else%}
+                    <tr bgcolor="#ffffff"  height="25" >
+                            <td colspan="2">当前没有人进行竞拍</td>
+                    </tr>
+                    {%endif%}
+                    <tr bgcolor="#ffffff"  height="25" >
+                            <td>当前竞拍最高积分</td>
+                            <td>{%if paimai!=None%}{{paimai.maxpoint}}{%else%}0{%endif%}</td>
+                    </tr>
+                    <tr bgcolor="#ffffff" >
+                            <td>当前可用最高积分：</td>
+                            <td>{{userpoint.point}}</td>
+                    </tr>
+                    <tr bgcolor="#ffffff"  height="25" >
+                            <td>使用竞拍积分：</td>
+                            <td><input name="point" type="text"/></td>
+                    </tr>
+                <tr bgcolor="#ffffff"  height="25" >
+                    <td colspan="2"> <input type="submit" name="Submit" value="竞拍"/>
+	  <input type="reset" name="Reset" value="重置"/><input type="hidden" name="username" value="{{username}}" />
+	  <input type="button" name="Return" value="返回" onClick="javascript:history.back(-1);" /></td>
+                </tr>
+                <tr bgcolor="#ffffff" height="25"  >
+                    <td colspan="2"> {%if msg!=None%}<span style="color:red;">{{msg}}</span>{%endif%}</td>
+                </tr>
+</table>
+</form>
+{% endblock %}

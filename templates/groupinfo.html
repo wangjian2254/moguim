@@ -1,0 +1,52 @@
+{% extends "templates/basepage.html" %}
+{% block navigator %}
+<a  href="#" >群管理</a>
+ >> <a href="/CreateGroupM">添加群</a> >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+ <input type="hidden" name="GroupId" value="{%if group %}{{group.key().id()}}{%endif%}"/>
+<table width="90%" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+
+                <tr bgcolor="#ffffff" >
+                    <td width="60">用户名</td>
+                    <td>{{group.author}}</td>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td width="60">群名称</td>
+                    <td>{{group.name|striptags}}</td>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td width="60">群类型</td>
+                    <td>
+                        <select name="GroupType">
+                            <option value="1" {%if group and group.type==1%}selected=selected{%endif%}>1：群拥有着、群主、成员</option>
+                            <option value="2" {%if group and group.type==2%}selected=selected{%endif%}>2：群拥有着、群主</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr bgcolor="#ffffff" >
+                    <td width="60">群标签Id</td>
+                    <td>
+                        <select name="GroupTagId">
+                            <option value="">---------</option>
+                            {%for tag in taglist%}
+                            <option value="{{tag.key().id()}}" {%if group and group.tag==tag.key().id()%} selected=selected {%endif%} >{{tag.name}}</option>
+                            {%endfor%}
+                        </select>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td width="60">群标公告</td>
+                    <td>
+                        {{group.gonggao|striptags}}
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td colspan="2">{%if msg!=None%}<span style="color:red;">{{msg}}</span>{%endif%} </td>
+                </tr>
+    <tr bgcolor="#ffffff" >
+                    <td colspan="2">
+	  <input type="button" name="Return" value="确定" onClick="javascript:window.location.href='/GroupListM';" /></td>
+                </tr>
+
+</table>
+{% endblock %}

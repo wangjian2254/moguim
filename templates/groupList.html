@@ -1,0 +1,44 @@
+{% extends "templates/basepage.html" %}
+{% block navigator %}
+<a  href="#" >群管理</a>
+ >> <a href="/CreateGroupM">添加群</a> >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<table id="contentList"    border="0" cellpadding=1 cellspacing=1 bgcolor="#D5E3E6" >
+    {% if isadmin %}
+<tr bgcolor="#ffffff" height="25">
+	<td colspan="11" align="center">
+		<form action="/GroupListM" method="post"><input type="radio" name="type" value="username" checked>用户名<input type="radio" name="type" value="groupid">群号  查询：<input type="text" name="value" size="25" > <input type="submit" value="提交"></form>
+	</td>
+</tr>
+    {% endif %}
+<tr bgcolor="#ffffff"  height="25">
+<td width="80px"  align="center">群号</td>
+		<td width="100px" align="center">群名称</td>
+		<td width="80px" align="center">群拥有者</td>
+		<td width="100px" align="center">群类型</td>
+		<td width="120px" align="center">群标签</td>
+		<td width="180px" align="center">群公告</td>
+		<td width="60px" align="center">帖子数量</td>
+		<td width="60px" align="center">置顶帖数量</td>
+<td width="100px;">操作</td>
+</tr>
+{% for content in list%}
+<tr style="cursor:hand"  height="25"   onmouseover="cells_color(this,1);" onMouseOut="cells_color(this,2);" bgcolor="#ffffff">
+<td align="center">{{content.key().id()}}</td>
+<td align="center"><a href="/NoteListM?type=groupid&value={{content.key().id()}}">{{content.name|striptags}}</a></td>
+<td><a href="/GroupListM?type=username&value={{content.author}}"> {{content.author}}</a></td>
+<td>{% if content.type==1 %}第一类型{%else%}第二类型{%endif%}</td>
+<td align="center">{{content.tagname|striptags}}</td>
+<td align="center">{{content.gonggao|striptags}}</td>
+<td align="center">{{content.notenum}}</td>
+<td align="center">{{content.topnum}}</td>
+
+<td ><a href="/CreateGroupM?GroupId={{content.key().id()}}">修改</a>&nbsp;&nbsp;&nbsp;|<a href="/CreateNoteM?GroupId={{content.key().id()}}">添加帖子</a>
+</td>
+</tr>
+
+{%endfor%}
+
+</table>
+{% endblock %}

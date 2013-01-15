@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Untitled Document</title>
+	</head>
+	<body>
+		<table width="90%" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+	<tr  bgcolor="#ffffff">
+		<td width="10px"  align="center"></td>
+		<td width="40px"  align="center">主编码</td>
+		<td width="8%" align="center">内容编码</td>
+		<td width="15%" align="center">抬头标题</td>
+		<td align="center">内容</td>
+		<td width="5%" align="center">父类</td>
+		<td width="50px" align="center">资讯等级</td>
+		<td width="50px" align="center">资讯状态</td>
+		<td width="100px;" align="center">最后更新时间</td>
+		<td width="90px;" align="center">更新时间间隔</td>
+		<td width="160px;" align="center">操作</td>
+	</tr>
+	{% for content in contents%}
+{% if content.code %}
+<tr bgcolor="#ffffff" onMouseOver="javascript:this.bgColor='#EFF1F1';" onMouseOut="javascript:this.bgColor='#ffffff';">
+<td align="center"><input name="cbox" type="radio" id="box" value="{{content.code}}" ></td>
+<td align="center">{{content.maincode}}</td>
+<td align="center"><a href="/contentList/0?father={{content.code}}">{{content.code}}</a></td>
+<td align="left"><a href="/contentList/0?father={{content.code}}">{{content.title}}</a></td>
+<td align="left">{{content.content}}</td>
+<td align="center">{{content.father}}</td>
+<td align="center">{{content.level}}</td>
+<td align="center">{{content.status}}</td>
+<td align="center">{{content.lastUpdateTime}}</td>
+<td align="center">{{content.updateSpanTime}}</td>
+<td align="center"> <a href="/contentUpdate?contentCode={{content.code}}&page_id={{index}}&father={{contet.father}}">编辑</a>&nbsp;|&nbsp;<a href="/contentDelete?contentCode={{content.code}}&page_id={{index}}&father={{content.father}}">删除</a>&nbsp;|&nbsp;<a href="/contentAdd?father={{content.father}}&prev={{content.prev}}&next={{content.code}}&page_id={{index}}">上添加</a>&nbsp;|&nbsp;<a href="/contentAdd?father={{content.father}}&prev={{content.code}}&next={{content.next}}&page_id={{index}}">下添加</a>
+<!--<input type="submit" value="上添加"  onClick="doCheking(this,1)"/>
+<input type="submit" value="下添加"  onClick="doCheking(this,2)"/>-->
+{%if level %}
+{%endif%}
+
+  <input name="radio" style="visibility:hidden; display:none" type="radio" id="rindex" value="{{index}}" >
+  <input name="radio" style="visibility:hidden; display:none" type="radio" id="rfather" value="{{father}}" >
+</td>
+</tr>
+{%endif%}
+{%endfor%}
+<tr bgcolor="#ffffff">
+	<td colspan="11" align="right" >
+		{% if prevpage %}<a href="/contentList{{prevpage}}">上一页</a>{% endif%}  {%if nextpage%}<a id="link2" href="/contentList{{nextpage}}">下一页</a>{% endif %}
+	</td>
+</tr>
+</table>
+	</body>
+</html>

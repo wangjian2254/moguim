@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        *{
+            font-size: 12px;
+            margin: 0px;
+            padding: 0px;
+        }
+    </style>
+</head>
+<body>
+<table width="100%">
+    <tr>
+        <td>
+            用户账户：
+        </td>
+        <td>
+            {{user.key().name()}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            用户积分：
+        </td>
+        <td>
+            {{user.point}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            群拥有者：
+        </td>
+        <td>
+            已经创建：{% for g in user.createGroup%}{{loop.index}}:{{g}}<br/>{%endfor%}
+            刚刚创建：{% for g in user.createGroupAdd%}{{loop.index}}:{{g}}<br/>{%endfor%}
+            刚刚删除：{% for g in user.createGroupRemove%}{{loop.index}}:{{g}}<br/>{%endfor%}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            群主：
+        </td>
+        <td>
+            已经加入：{% for g in user.partnerGroup%}{{loop.index}}:{{g}}<br/>{%endfor%}
+            刚刚加入：{% for g in user.partnerGroupAdd%}{{loop.index}}:{{g}}<br/>{%endfor%}
+            刚刚退出：{% for g in user.partnerGroupRemove%}{{loop.index}}:{{g}}<br/>{%endfor%}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            普通成员：
+        </td>
+        <td>
+            已经加入：{% for g in user.memberGroup%}{{loop.index}}:{{g}}<br/>{%endfor%}
+            刚刚加入：{% for g in user.memberGroupAdd%}{{loop.index}}:{{g}}<br/>{%endfor%}
+            刚刚退出：{% for g in user.memberGroupRemove%}{{loop.index}}:{{g}}<br/>{%endfor%}
+        </td>
+    </tr>
+    
+</table>
+</body>
+</html>

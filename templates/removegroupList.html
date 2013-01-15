@@ -1,0 +1,36 @@
+{% extends "templates/basepage.html" %}
+{% block navigator %}
+<a  href="#" >群管理</a>
+ >> <a href="#">解散群</a> >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<table id="contentList"    border="0" cellpadding=1 cellspacing=1 bgcolor="#D5E3E6" >
+
+<tr bgcolor="#ffffff"  height="25">
+    <td width="80px"  align="center">群号</td>
+    		<td width="100px" align="center">群名称</td>
+    		<td width="80px" align="center">群拥有者</td>
+    		<td width="100px" align="center">群类型</td>
+    		<td width="120px" align="center">群标签</td>
+    		<td width="60px" align="center">帖子数量</td>
+    		<td width="60px" align="center">置顶帖数量</td>
+    <td width="100px;">操作</td>
+</tr>
+{% for content in list%}
+<tr style="cursor:hand"  height="25"   onmouseover="cells_color(this,1);" onMouseOut="cells_color(this,2);" bgcolor="#ffffff">
+<td align="center">{{content.key().id()}}</td>
+<td align="center">{{content.name|striptags}}</td>
+<td> {{content.author}}</td>
+<td>{% if content.type==1 %}第一类型{%else%}第二类型{%endif%}</td>
+<td align="center">{{content.tag|striptags}}</td>
+<td align="center">{{content.notenum}}</td>
+<td align="center">{{content.topnum}}</td>
+
+<td ><a href="/RemoveGroupM?groupid={{content.key().id()}}" onclick="return confirm('确定要删除该群么？');">删除群</a>
+</td>
+</tr>
+
+{%endfor%}
+
+</table>
+{% endblock %}

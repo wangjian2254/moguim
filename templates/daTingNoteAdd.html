@@ -1,0 +1,53 @@
+{% extends "templates/basepage.html" %}
+{% block navigator %}
+<a  href="#" >群管理</a>
+ >> <a href="/daTingNoteList">大厅帖子列表</a> >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<form action="/daTingNote" method="post"  enctype="multipart/form-data">
+ <input type="hidden" name="Noteid" value="{%if note %}{{note.key().id()}}{%endif%}"/>
+<table width="90%" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+
+
+                <tr bgcolor="#ffffff" >
+                    <td>标题：</td>
+                    <td><input type="text" name="NoteTitle" value="{{note.title|striptags}}" style="width: 500px" ></td>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td>群ID：</td>
+                    <td><input type="text" name="GroupId" value="{{note.group|striptags}}" style="width: 500px" ></td>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td>图片：</td>
+                    <td><input type="file" name="imgfile" style="width: 200px" value="上传" >(jpg、gif、png格式；图片最大1Mb)</td>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td>帖子内容：</td>
+                    <td><textarea name="NoteContent" style="width: 500px;height: 100px;">{{note.content|striptags}}</textarea></td>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td>是否发布</td>
+                    <td><input type="radio" name="isPub" value="Y" {%if not note%}checked="checked"{%else%}{%if note.isPub%}checked="checked"{%endif%}{%endif%}>发布   <input  type="radio" name="isPub" value="N" {%if  note%}{%if not note.isPub%}checked="checked"{%endif%}{%endif%}>不发布</td>
+                </tr>
+                <tr bgcolor="#ffffff" >
+                    <td colspan="2"> <input type="submit" name="Submit" value="确定"/>
+	  <input type="reset" name="Reset" value="重置"/>
+	  <input type="button" name="Return" value="返回" onClick="javascript:history.back(-1);" /></td>
+                </tr>
+    {%if msg!=None%}
+    <tr bgcolor="#ffffff" >
+        <td colspan="2"><span style="color:red;">{{msg}}</span></td>
+    </tr>
+    {%endif%}
+    {%for img in imglist%}
+        {%if img!=None%}
+          <tr bgcolor="#ffffff">
+              <td colspan="2">
+              {%if img.src%}    <img src="{{img.src}}"/>{%else%}<img src="/downLoad?image_id={{img.key().id()}}"/> {%endif%} <a href="/DelNoteImgM?Noteid={{note.key().id()}}&image_id={{img.key().id()}}">删除图片</a>
+              </td>
+          </tr>
+        {%endif%}
+    {%endfor%}
+</table>
+</form>
+{% endblock %}

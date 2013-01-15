@@ -1,0 +1,9 @@
+cron:
+
+- description: DoHotNote
+  url: /DoHotNote
+  schedule: every 3 hours
+
+
+
+

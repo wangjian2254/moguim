@@ -1,0 +1,423 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+     <style type="text/css">
+        *{
+            font-size: 12px;
+            margin: 0px;
+            padding: 0px;
+        }
+    </style>
+</head>
+<body>
+<center>
+<table width="800px">
+    <tr>
+        <td colspan="2">
+           此处是群测试。转到： <a href="/">聊天测试</a>
+    </td>
+    <tr>
+        <td >
+            查看用户信息:<form action="/userinfo" method="get" target="userinfo"><input name="UserName" type="text" size="15"><input type="submit" value="刷新"></form>
+        </td>
+        <td >
+            查看群信息:<form action="/groupinfo" method="get" target="groupinfo"><input name="GroupId" type="text" size="15"><input type="submit" value="刷新"></form>
+        </td>
+    </tr>
+    <tr>
+        <td width="50%">
+            <iframe width="100%" height="100" name="userinfo"></iframe>
+        </td>
+        <td >
+            <iframe width="100%" height="100" name="groupinfo"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            1.创建群
+        </td>
+    </tr>
+     <form action="/CreateGroup" method="post" target="createGroup">
+    <tr>
+        <td colspan="2">
+            <table>
+                <tr>
+                    <td width="60">用户名</td>
+                    <td><input type="text" name="UserName" ></td>
+                </tr>
+                <tr>
+                    <td width="60">群名称</td>
+                    <td><input type="text" name="GroupName" ></td>
+                </tr>
+                <tr>
+                    <td width="60">群类型</td>
+                    <td><input type="text" name="GroupType" >（1：群拥有着、群主、成员。2：群拥有着、群主）</td>
+                </tr>
+                <tr>
+                    <td width="60">群标签</td>
+                    <td><input type="text" name="GroupTag" >（和群标签id任意填写一个，两者都写，按照群标签处理。群标签如果已经有了，不会重复增加。如果没有会新增）</td>
+                </tr>
+                <tr>
+                    <td width="60">群标签Id</td>
+                    <td><input type="text" name="GroupTagId" >（和群标签id任意填写一个，两者都写，按照群标签处理。群标签Id如果已经有了，则使用。如果没有，则群无标签）</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="保存" >（用户名、群名、类型 如果有一个没有提供，返回‘2’，如果系统报错返回‘1’，如果创建成功返回"url地址"）</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+         </form>
+    <tr>
+        <td colspan="2">
+            <iframe width="100%" height="30" name="createGroup"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+    <tr>
+        <td colspan="2">2.加入、退出群</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table>
+                <form action="/JoinGroup" method="post" target="joinGroup">
+                    <tr>
+                        <td>用户名：</td>
+                        <td><input type="text" name="UserName"></td>
+                    </tr>
+                    <tr>
+                        <td>群</td>
+                        <td><select name="GroupId">
+                            {%for group in grouplist%}
+                            <option value="{{group.key().id()}}">id:{{group.key().id()}},name:{{group.name}}</option>
+                            {%endfor%}
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td>操作</td>
+                        <td><select name="DoType">
+                            <option value="1">作为参与者加入群</option>
+                            <option value="2">作为参与者退出群</option>
+                            <option value="3">作为群主加入群</option>
+                            <option value="4">作为群主退出群</option>
+                            <option value="5">参与者升为群主</option>
+                            <option value="6">群主降为参与者</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="提交">（操作成功 返回网址，操作失败，返回数字）</td>
+                    </tr>
+                </form>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <iframe width="100%" height="30" name="joinGroup"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+    <tr>
+        <td colspan="2">3.查找群（根据群id 或标签）</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table>
+                <form action="/SearchGroup" method="post" target="searchGroup">
+
+                    <tr>
+                        <td>群id：</td>
+                        <td><input type="text" name="GroupId"></td>
+                    </tr>
+                    <tr>
+                        <td>标签</td>
+                        <td><select name="TagId">
+                            <option value="">---------</option>
+                            {%for tag in taglist%}
+                            <option value="{{tag.key().id()}}">id:{{tag.key().id()}},name:{{tag.name}}</option>
+                            {%endfor%}
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td>页数</td>
+                        <td><select name="page">
+                            <option value="0">第一页</option>
+                            <option value="1">第二页</option>
+                            <option value="2">第三页</option>
+
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="查找">（操作成功 返回数据，操作失败，返回数字）</td>
+                    </tr>
+                </form>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <iframe width="100%" height="100" name="searchGroup"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+    <tr>
+        <td colspan="2">4.发帖、修改贴</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table>
+                <form action="/CreateNote" method="post" target="createNote">
+
+                    <tr>
+                        <td>贴id：</td>
+                        <td><input type="text" name="Noteid">（提供了，就是修改，不提供就是添加）</td>
+                    </tr>
+                    <tr>
+                        <td>用户名：</td>
+                        <td><input type="text" name="UserName"></td>
+                    </tr>
+                    <tr>
+                        <td>标题：</td> 
+                        <td><input type="text" name="NoteTitle"></td>
+                    </tr>
+                    <tr>
+                        <td>帖子内容：</td>
+                        <td><textarea name="NoteContent" style="width: 500px;height: 30px;"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td>群</td>
+                        <td><select name="GroupId">
+                            {%for group in grouplist%}
+                            <option value="{{group.key().id()}}">id:{{group.key().id()}},name:{{group.name}}</option>
+                            {%endfor%}
+                        </select></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2"><input type="submit" value="保存">（操作成功 返回网址，操作失败，返回数字1.id包含字母 2.权限不够 3.群不存在）</td>
+                    </tr>
+                </form>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <iframe width="100%" height="100" name="createNote"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+    <tr>
+        <td colspan="2">5.删除贴</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table>
+                <form action="/DelNote" method="post" target="delNote">
+
+                    <tr>
+                        <td>贴id：</td>
+                        <td><input type="text" name="Noteid">（提供了，就是修改，不提供就是添加）</td>
+                    </tr>
+                    <tr>
+                        <td>用户名：</td>
+                        <td><input type="text" name="UserName"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="保存">（操作成功 返回网址，操作失败，返回数字1.id包含字母 2.权限不够 3.群不存在,帖子删除）</td>
+                    </tr>
+                </form>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <iframe width="100%" height="100" name="delNote"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+    <tr>
+        <td colspan="2">6.回复贴子</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table>
+                <form action="/PutReplay" method="post" target="putReplay">
+
+                    <tr>
+                        <td>贴id：</td>
+                        <td><input type="text" name="Noteid">（提供了，就是修改，不提供就是添加）</td>
+                    </tr>
+                    <tr>
+                        <td>用户名：</td>
+                        <td><input type="text" name="UserName"></td>
+                    </tr>
+                    <tr>
+                        <td>评论：</td>
+                        <td><textarea name="ReplayContent" style="width: 500px;height: 30px;"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="保存">（操作成功 返回网址，操作失败，返回数字1.）</td>
+                    </tr>
+                </form>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <iframe width="100%" height="100" name="putReplay"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+    <tr>
+        <td colspan="2">7.操作贴子</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table>
+                <form action="/DoNote" method="post" target="doNote">
+
+                    <tr>
+                        <td>贴id：</td>
+                        <td><input type="text" name="Noteid">（提供了，就是修改，不提供就是添加）</td>
+                    </tr>
+                    <tr>
+                        <td>用户名：</td>
+                        <td><input type="text" name="UserName"></td>
+                    </tr>
+                    <tr>
+                        <td>操作：</td>
+                        <td><select name="DoMod">
+                            <option value="up">顶</option>
+                            <option value="down">踩</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="保存">（操作成功 返回网址，操作失败，返回数字1.）</td>
+                    </tr>
+                </form>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <iframe width="100%" height="100" name="doNote"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+    <tr>
+        <td colspan="2">8.置顶、取消置顶贴子</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table>
+                <form action="/TopNote" method="post" target="topNote">
+
+                    <tr>
+                        <td>贴id：</td>
+                        <td><input type="text" name="Noteid">（提供了，就是修改，不提供就是添加）</td>
+                    </tr>
+                    <tr>
+                        <td>用户名：</td>
+                        <td><input type="text" name="UserName"></td>
+                    </tr>
+                    <tr>
+                        <td>操作：</td>
+                        <td><select name="DoMod">
+                            <option value="do">设为置顶</option>
+                            <option value="not">取消置顶</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="保存">（操作成功 返回网址，操作失败，返回数字1.）</td>
+                    </tr>
+                </form>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">
+            <iframe width="100%" height="100" name="topNote"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+ <tr>
+        <td colspan="2">9.InfoAll、InfoUpdate</td>
+    </tr>
+    <tr>
+        <td >
+            <table>
+                <form action="/InfoAll" method="get" target="infoall">
+                    <tr>
+                        <td>用户名：</td>
+                        <td><input type="text" name="UserName"></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2"><input type="submit" value="同步">（操作成功 返回xml，操作失败，返回数字1）</td>
+                    </tr>
+                </form>
+            </table>
+        </td>
+        <td >
+            <table>
+                <form action="/InfoUpdate" method="get" target="infoupdate">
+                    <tr>
+                        <td>用户名：</td>
+                        <td><input type="text" name="UserName"></td>
+                    </tr>
+                    <tr>
+                        <td>群同步时间戳：</td>
+                        <td><input type="text" name="timeline"></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2"><input type="submit" value="同步">（操作成功 返回xml，操作失败，返回数字1）</td>
+                    </tr>
+                </form>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td >
+            <iframe width="100%" height="100" name="infoall"></iframe>
+        </td>
+        <td >
+            <iframe width="100%" height="100" name="infoupdate"></iframe>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="background-color: skyblue;height: 5px;"></td>
+    </tr>
+</table>
+    </center>
+</body>
+</html>
