@@ -42,7 +42,7 @@ class SearchGuPiao(Page):
                     self.response.out.write(json.dumps(opts))
                 else:
                     l.append({'key':opts[0],'type_n':opts[1],'type':chardict[opts[1]],'dm':opts[2],'dmall':opts[3],'name':opts[4]})
-                    self.response.out.write(u"%s %s %s %s %s %s</br>"%(opts[0],chardict[opts[1]],opts[2],opts[3],opts[4],opts[5]))
+#                    self.response.out.write(u"%s %s %s %s %s %s</br>"%(opts[0],chardict[opts[1]],opts[2],opts[3],opts[4],opts[5]))
 
             self.response.out.write(json.dumps(l))
         else:
@@ -51,19 +51,16 @@ class SearchGuPiao(Page):
 
 
 #参加、退出群
-class JoinGroup(Page):
+class JoinGuPiao(Page):
     def post(self):
         try:
-            userName=self.request.get("TheUserName")
+            userName=self.request.get("UserName")
             user=getorAddUser(userName)
-            groupId=self.request.get("GroupId")
-            if groupId:
-                try:
-                    groupId=int(groupId)
-                except Exception,e:
-                    logging.info(str(e))
-                    self.response.out.write('1')
-                    return
+            dm=self.request.get("dm")
+            dmall=self.request.get("dmall")
+            type_n=self.request.get("type_n")
+            name=self.request.get("name")
+            #### 下面是加入群
         except Exception,e:
             logging.info(str(e))
             self.response.out.write('1')

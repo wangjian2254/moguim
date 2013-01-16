@@ -143,4 +143,12 @@ class Img(db.Model):# int id
 
 class MecacheNote(db.Model):
     content=db.TextProperty()
+
+
+#股票应用关联表
+class GupiaoToGroup(db.Model):#key 为dm（股票代码）
+    group=db.IntegerProperty()#对应群id
+    name=db.StringProperty(indexed=False)#公司名称
+    dmall=db.StringProperty(indexed=False)#完整股票代码 美股 不适用
+    type=db.StringProperty(indexed=False)#股票类型，A股 B股、
     
