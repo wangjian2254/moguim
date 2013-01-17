@@ -17,8 +17,13 @@ APPCODE_ID='a4_1'
 
 HOMEURL='http://www.mmggoo.com'
 
-APPCODE_APPTYPE={'0':u'新闻订阅','1':u'聊天','3':u'群','999':u'系统信息'}
+APPCODE_APPTYPE={'0':u'新闻订阅','1':u'聊天','3':u'群','4':u'股票','999':u'系统信息'}
 
 AdNoteTime='20120903'
+
+
+#股票同步应用网址（获取股票数据的应用）
+#GUPIAOURL='http://gupiao.mmggoo.com'
+GUPIAOURL='http://localhost:8080'
 
 

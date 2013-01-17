@@ -7,7 +7,7 @@ import time
 import uuid
 
 from im.model.models import Tag, Group, Note, Replay, User, MecacheNote, Img, HoTNote, AdNote, RssNote, RssImg, DaTingNote, PaiMai
-from im.tool import getorAddUser, doUserPoint
+from im.tool import getorAddUser, doUserPoint, addNeedSyncGuPiao
 import setting
 from tools.page import Page
 import json
@@ -799,7 +799,12 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                         groupCount(groupdic,group,fathergroup)
                         replaylist.append('g'+str(n['group'])+'r'+str(n['id']))
                     continue
-
+                ####
+                #### 判断是否股票群 ，单独处理
+                ####
+                if groupmap[str(group)].apptype=='4':
+                    addNeedSyncGuPiao(group)
+                    continue
 
                 for n in Note.all().filter('group =',group).filter('isDelete =',False).order('-updateTime').fetch(groupmap[str(group)].notecount+groupmap[str(group)].topcount):
                     if notenum>50:
@@ -856,6 +861,12 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                             #计算群帖子数量
                             groupCount(groupdic,group,fathergroup)
                             replaylist.append('g'+str(group)+'r'+str(n['id']))
+                    continue
+                ####
+                #### 判断是否股票群 ，单独处理
+                ####
+                if groupmap[str(group)].apptype=='4':
+                    addNeedSyncGuPiao(group)
                     continue
 
                 for n in Note.all().filter('group =',group).filter('updateTime >',timeline):

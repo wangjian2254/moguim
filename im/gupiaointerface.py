@@ -1,5 +1,5 @@
 #coding=utf-8
-from im.model.models import GupiaoToGroup
+from im.model.models import GupiaoToGroup, Group
 from im.rssinterface import memacheGroup
 from im.tool import getorAddUser
 import setting
@@ -53,6 +53,27 @@ class SearchGuPiao(Page):
 
 
 
+
+class NeedSyncGuPiao(Page):
+    def get(self):
+        #获取该同步的股票群
+        s=''
+        needsyncgupiao=memcache.get('needsyncgupiao')
+        if needsyncgupiao:
+            s=','.join(needsyncgupiao)
+            self.response.out.write(s)
+            memcache.delete('needsyncgupiao')
+        return
+class DeleteNeedSyncGuPiao(Page):
+    def post(self):
+        #删除需要同步的股票di缓存
+        gupiaogroupid=self.request.get('needdelgroupid','')
+        if gupiaogroupid:
+            kl=gupiaogroupid.split(',')
+            memcache.delete_multi(kl)
+        return
+
+
 #参加、退出群
 class JoinGuPiao(Page):
     def post(self):
@@ -78,21 +99,59 @@ class JoinGuPiao(Page):
                 else:
                     self.response.out.write('1')
                     return
-                gupiaoToGroup=GupiaoToGroup.get_by_key_name(key_names=dm)
-                if gupiaoToGroup:
-                    group=memacheGroup(groupId)
-                    if group:
-                        if userName not in group.member:
-                            group.member.append(userName)
-                        if group.key().id() not in user.memberGroup:
-                            if group.key().id() not in user.memberGroupAdd:
-                                user.memberGroupAdd.append(group.key().id())
-                                if group.key().id() in user.memberGroupRemove:
-                                    user.memberGroupRemove.remove(group.key().id())
-                    else:
+                gupiaoToGroup=memcache.get('gupiaodm'+dm)
+                if not gupiaoToGroup:
+                    gupiaoToGroup=GupiaoToGroup.get_by_key_name(key_names='g'+dm)
+                    if gupiaoToGroup:
+                        memcache.set('gupiaodm'+dm,gupiaoToGroup,36000)
+                if not gupiaoToGroup:
+                    group=Group()
+                    group.name=name
+                    group.type=4
+                    group.apptype='4'
+                    group.author='000'
+                    group.head=0
+                    group.notecount=1
+                    group.put()
+                    gupiaoToGroup=GupiaoToGroup(key_name='g'+dm)
+                    gupiaoToGroup.group=group.key().id()
+                    gupiaoToGroup.name=name
+                    gupiaoToGroup.dmall=dmall
+                    gupiaoToGroup.type=type_n
+                    gupiaoToGroup.put()
+                    #######
+                    ###同步给股票同步应用
+                    result = urlfetch.fetch(
+                        url =setting.GUPIAOURL+'/markGroup?groupid=%s&dm=%s&type=%s&realNo=%s'%(group.key().id(),dm,type_n,realNo),
+        #                    payload = login_data,
+                        method = urlfetch.GET,
+                        headers = {'Content-Type':'application/x-www-form-urlencoded',
+                                   'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6'},
+                        follow_redirects = False,deadline=20)
+                    if result.status_code != 200 :
+                        group.delete()
+                        gupiaoToGroup.delete()
                         self.response.out.write('2')
+                        return
+                    else:
+                        memcache.set('gupiaodm'+dm,gupiaoToGroup,36000)
+
+
                 else:
-                    pass#新被订阅的股票
+                    group=memacheGroup(gupiaoToGroup.group)
+                if group:
+                    if userName not in group.member:
+                        group.member.append(userName)
+                    if group.key().id() not in user.memberGroup:
+                        if group.key().id() not in user.memberGroupAdd:
+                            user.memberGroupAdd.append(group.key().id())
+                            if group.key().id() in user.memberGroupRemove:
+                                user.memberGroupRemove.remove(group.key().id())
+                else:
+                    self.response.out.write('2')
+                    return
+
+
             elif do=='2':
                 ##### 下面是退出群 退订股票
                 if groupId:
