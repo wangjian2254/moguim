@@ -7,7 +7,7 @@ import time
 import uuid
 
 from im.model.models import Tag, Group, Note, Replay, User, MecacheNote, Img, HoTNote, AdNote, RssNote, RssImg, DaTingNote, PaiMai
-from im.tool import getorAddUser, doUserPoint, addNeedSyncGuPiao
+from im.tool import getorAddUser, doUserPoint, addNeedSyncGuPiao, getGuPiaoNote
 import setting
 from tools.page import Page
 import json
@@ -23,6 +23,9 @@ timezone=datetime.timedelta(hours =8)
 groupReplayType='40'
 noteReplayType='41'
 replayReplayType='42'
+
+#股票格式 50
+gupiaoReplayType='50'
 
 class UserInfo(Page):
     def get(self):
@@ -804,8 +807,12 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                 ####
                 if groupmap[str(group)].apptype=='4':
                     addNeedSyncGuPiao(group)
+                    guPiaoNote=getGuPiaoNote(str(group))
+                    getMapList(contentlist,fathergroup+'-0',fathergroup,'0',setting.APPCODE,'102',guPiaoNote.content,guPiaoNote.updateTime,status,gupiaoReplayType)
                     continue
 
+
+                ##### 普通群的帖子
                 for n in Note.all().filter('group =',group).filter('isDelete =',False).order('-updateTime').fetch(groupmap[str(group)].notecount+groupmap[str(group)].topcount):
                     if notenum>50:
                         mecachenote.append((True,n.key().id(),group,fathergroup))
@@ -867,6 +874,9 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                 ####
                 if groupmap[str(group)].apptype=='4':
                     addNeedSyncGuPiao(group)
+                    guPiaoNote=getGuPiaoNote(str(group))
+                    if timeline<guPiaoNote.updateTime:
+                        getMapList(contentlist,fathergroup+'-0',fathergroup,'0',setting.APPCODE,'102',guPiaoNote.content,guPiaoNote.updateTime,status,gupiaoReplayType)
                     continue
 
                 for n in Note.all().filter('group =',group).filter('updateTime >',timeline):

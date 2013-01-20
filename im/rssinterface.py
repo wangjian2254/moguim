@@ -10,7 +10,6 @@ import setting
 
 from google.appengine.api import memcache
 
-import datetime
 timezone=datetime.timedelta(hours =8)
 
 __author__ = u'王健'

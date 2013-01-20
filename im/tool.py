@@ -2,7 +2,7 @@
 #Date: 11-12-8
 #Time: 下午10:28
 from google.appengine.api import memcache
-from im.model.models import User, UserPoint
+from im.model.models import User, UserPoint, GuPiaoNote
 
 __author__ = u'王健'
 
@@ -44,3 +44,11 @@ def addNeedSyncGuPiao(groupid):
         needsyncgupiao.add(str(groupid))
         memcache.set('needsyncgupiao',needsyncgupiao,3600)
         memcache.set('needsyncgupiao_groupidg%s'%groupid,'True',3600)
+
+
+def getGuPiaoNote(groupid):
+    guPiaoNote=memcache.get('gupiaonoteg'+groupid)
+    if not guPiaoNote:
+        guPiaoNote=GuPiaoNote.get_by_key_name('g'+groupid)
+        memcache.set('gupiaonoteg'+groupid,guPiaoNote,36000)
+    return guPiaoNote

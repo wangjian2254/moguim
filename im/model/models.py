@@ -151,4 +151,8 @@ class GupiaoToGroup(db.Model):#key 为dm（股票代码）
     name=db.StringProperty(indexed=False)#公司名称
     dmall=db.StringProperty(indexed=False)#完整股票代码 美股 不适用
     type=db.StringProperty(indexed=False)#股票类型，A股 B股、
+
+class GuPiaoNote(db.Model):#股票行情 帖子
+    content=db.TextProperty(default='{}')
+    updateTime=db.DateTimeProperty(auto_now=True)
     

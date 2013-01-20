@@ -1,5 +1,5 @@
 #coding=utf-8
-from im.model.models import GupiaoToGroup, Group
+from im.model.models import GupiaoToGroup, Group, GuPiaoNote
 from im.rssinterface import memacheGroup
 from im.tool import getorAddUser
 import setting
@@ -11,10 +11,11 @@ from xml.dom.minidom import Document
 from google.appengine.ext import db
 from google.appengine.api import urlfetch
 import logging,json
+import datetime,time
 from tools.page import Page
 chardict={"11":u"A股","24":u"货基","13":u"权证","12":u"B股","15":u"债券","14":u"期货","22":u"ETF","23":u"LOF","33":u"港指数","32":u"窝轮","31":u"港股","42":u"外期","26":u"封基","41":u"美股","25":u"QDII","21":u"开基"}
 
-
+timezone=datetime.timedelta(hours =8)
 #http://suggest3.sinajs.cn/suggest/type=&name=suggestdata_1357476438968&key=shg
 #查找群
 class SearchGuPiao(Page):
@@ -50,6 +51,22 @@ class SearchGuPiao(Page):
             self.response.out.write(json.dumps(l))
         else:
             self.response.out.write(json.dumps(l))
+
+class SyncGuPiao(Page):
+    def post(self):
+        #获取股票数据
+        groupidlist=self.request.get('groupids','').split(',')
+        noteupdate=datetime.datetime.utcnow()+timezone
+        guPiaoNoteList=GuPiaoNote.get_by_id(groupidlist)
+        for i,groupid in groupidlist:
+            guPiaoNote=guPiaoNoteList[i]
+            if not guPiaoNote:
+                guPiaoNote=GuPiaoNote(key_name=groupid)
+            if self.request.get(groupid)!=guPiaoNote.content:
+                guPiaoNote.content=self.request.get(groupid)
+                guPiaoNote.updateTime=noteupdate
+                guPiaoNote.put()
+                memcache.set('gupiaonote'+groupid,guPiaoNote,36000)
 
 
 
