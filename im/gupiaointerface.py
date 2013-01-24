@@ -65,6 +65,7 @@ class SyncGuPiao(Page):
             if self.request.get(groupid)!=guPiaoNote.content:
                 guPiaoNote.content=self.request.get(groupid)
                 guPiaoNote.updateTime=noteupdate
+#                guPiaoNote.imagestr=self.request.get('image'+groupid)
                 guPiaoNote.put()
                 memcache.set('gupiaonote'+groupid,guPiaoNote,36000)
 
@@ -130,6 +131,9 @@ class JoinGuPiao(Page):
                     group.head=0
                     group.notecount=1
                     group.put()
+                    guPiaoNote=GuPiaoNote(key_name='g'+group.key().id())
+                    guPiaoNote.imagestr='_%s_%s'%(realNo,type_n)
+                    guPiaoNote.put()
                     gupiaoToGroup=GupiaoToGroup(key_name='g'+dm)
                     gupiaoToGroup.group=group.key().id()
                     gupiaoToGroup.name=name

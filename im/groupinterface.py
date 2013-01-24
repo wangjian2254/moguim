@@ -7,7 +7,7 @@ import time
 import uuid
 
 from im.model.models import Tag, Group, Note, Replay, User, MecacheNote, Img, HoTNote, AdNote, RssNote, RssImg, DaTingNote, PaiMai
-from im.tool import getorAddUser, doUserPoint, addNeedSyncGuPiao, getGuPiaoNote
+from im.tool import getorAddUser, doUserPoint, addNeedSyncGuPiao, getGuPiaoNote, addGuPiaoImage
 import setting
 from tools.page import Page
 import json
@@ -625,7 +625,8 @@ def getRssNoteList(group):
 #带上群应用的infoupdate
 #第一个参数是 响应类 第二个参数 是xml 第三个参数是 obj2map 然后加进list里
 def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
-
+    #股票应用的图库xml
+    group_xml=None
 
     groupdic={}
 #    noticenum=0
@@ -808,7 +809,9 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                 if groupmap[str(group)].apptype=='4':
                     addNeedSyncGuPiao(group)
                     guPiaoNote=getGuPiaoNote(str(group))
-                    getMapList(contentlist,fathergroup+'-0',fathergroup,'0',setting.APPCODE,'102',guPiaoNote.content,guPiaoNote.updateTime,status,gupiaoReplayType)
+                    if guPiaoNote.content:
+                        group_xml=addGuPiaoImage(xml,group_xml,guPiaoNote.imagestr,timelineint)
+                        getMapList(contentlist,fathergroup+'-0',fathergroup,'0',setting.APPCODE,'102',guPiaoNote.content,guPiaoNote.updateTime,status,gupiaoReplayType)
                     continue
 
 
@@ -875,7 +878,8 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                 if groupmap[str(group)].apptype=='4':
                     addNeedSyncGuPiao(group)
                     guPiaoNote=getGuPiaoNote(str(group))
-                    if timeline<guPiaoNote.updateTime:
+                    if timeline<guPiaoNote.updateTime and guPiaoNote.content:
+                        group_xml=addGuPiaoImage(xml,group_xml,guPiaoNote.imagestr,timelineint)
                         getMapList(contentlist,fathergroup+'-0',fathergroup,'0',setting.APPCODE,'102',guPiaoNote.content,guPiaoNote.updateTime,status,gupiaoReplayType)
                     continue
 

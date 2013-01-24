@@ -153,6 +153,6 @@ class GupiaoToGroup(db.Model):#key 为dm（股票代码）
     type=db.StringProperty(indexed=False)#股票类型，A股 B股、
 
 class GuPiaoNote(db.Model):#股票行情 帖子
-    content=db.TextProperty(default='{}')
-    updateTime=db.DateTimeProperty(auto_now=True)
-    
+    content=db.TextProperty()
+    imagestr=db.StringProperty(indexed=False)
+    updateTime=db.DateTimeProperty(auto_now=True,indexed=False)
