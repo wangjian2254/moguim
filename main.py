@@ -3,7 +3,7 @@
 from im.datingmanage import daTingNoteDel, daTingNote, daTingNoteList
 from im.groupinterface import CreateGroup, JoinGroup,  TopNote, DoNote, PutReplay, DelNote, CreateNote, SearchGroup, UserInfo, ShowImg, DeleteNote, DoHotNote
 from im.groupinterfacemanage import CreateGroupM, NoteListM, CreateNoteM, GroupListM, DelNoteM, TopNoteM, Login, Top, Menu,PutAdNote, DoingAdNote, JingPai, RemoveGroupM,GroupInfo, DelNoteImgM
-from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao
+from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao, JoinGuPiao
 from im.rssinterface import RssMsg, SyncGroup
 from im.groupinterface import  Rssjson
 
@@ -67,6 +67,7 @@ app = webapp2.WSGIApplication([
 ##########################有关股票的接口
     ('/SearchGuPiao',SearchGuPiao),
     ('/NeedSyncGuPiao',NeedSyncGuPiao),
+    ('/JoinGuPiao',JoinGuPiao),#
     ('/DeleteNeedSyncGuPiao',DeleteNeedSyncGuPiao),
 ###################################
 

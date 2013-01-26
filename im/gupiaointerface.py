@@ -16,10 +16,11 @@ from tools.page import Page
 chardict={"11":u"A股","24":u"货基","13":u"权证","12":u"B股","15":u"债券","14":u"期货","22":u"ETF","23":u"LOF","33":u"港指数","32":u"窝轮","31":u"港股","42":u"外期","26":u"封基","41":u"美股","25":u"QDII","21":u"开基"}
 
 timezone=datetime.timedelta(hours =8)
+resultStr='{"result":"%s","message":"%s","url":"%s"}'
 #http://suggest3.sinajs.cn/suggest/type=&name=suggestdata_1357476438968&key=shg
 #查找群
 class SearchGuPiao(Page):
-    def get(self):
+    def post(self):
 #        groupid=self.request.get("GroupId")
 #        tagid=self.request.get("TagId")
         tagname=self.request.get("Tagname")
@@ -115,7 +116,7 @@ class JoinGuPiao(Page):
                 elif type_n=='41':
                     realNo='gb_'+dm
                 else:
-                    self.response.out.write('1')
+                    self.response.out.write(resultStr%('fail',u'只能订阅A股、B股、港股、美股',''))
                     return
                 gupiaoToGroup=memcache.get('gupiaodm'+dm)
                 if not gupiaoToGroup:
@@ -131,7 +132,7 @@ class JoinGuPiao(Page):
                     group.head=0
                     group.notecount=1
                     group.put()
-                    guPiaoNote=GuPiaoNote(key_name='g'+group.key().id())
+                    guPiaoNote=GuPiaoNote(key_name='g'+str(group.key().id()))
                     guPiaoNote.imagestr='_%s_%s'%(realNo,type_n)
                     guPiaoNote.put()
                     gupiaoToGroup=GupiaoToGroup(key_name='g'+dm)
@@ -152,7 +153,7 @@ class JoinGuPiao(Page):
                     if result.status_code != 200 :
                         group.delete()
                         gupiaoToGroup.delete()
-                        self.response.out.write('2')
+                        self.response.out.write(resultStr%('fail',u'订阅股票失败，请稍后再试',''))
                         return
                     else:
                         memcache.set('gupiaodm'+dm,gupiaoToGroup,36000)
@@ -169,7 +170,7 @@ class JoinGuPiao(Page):
                             if group.key().id() in user.memberGroupRemove:
                                 user.memberGroupRemove.remove(group.key().id())
                 else:
-                    self.response.out.write('2')
+                    self.response.out.write(resultStr%('fail',u'订阅股票失败，股票已被删除',''))
                     return
 
 
@@ -191,8 +192,8 @@ class JoinGuPiao(Page):
                             user.memberGroupRemove.append(group.key().id())
                             if group.key().id() in user.memberGroupAdd:
                                 user.memberGroupAdd.remove(group.key().id())
-            self.response.out.write(setting.WEBURL[7:]+'/InfoUpdate')
+            self.response.out.write(resultStr%('success','',setting.WEBURL[7:]+'/InfoUpdate'))
         except Exception,e:
             logging.info(str(e))
-            self.response.out.write('1')
+            self.response.out.write(resultStr%('fail',u'订阅股票失败，请稍后再试',''))
 

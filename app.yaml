@@ -1,5 +1,5 @@
-application: sz-groups
-version: 4
+application: mogu2-im
+version: 4-gupiao
 runtime: python27
 api_version: 1
 threadsafe: true
