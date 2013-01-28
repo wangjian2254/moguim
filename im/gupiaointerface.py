@@ -56,10 +56,13 @@ class SearchGuPiao(Page):
 class SyncGuPiao(Page):
     def post(self):
         #获取股票数据
-        groupidlist=self.request.get('groupids','').split(',')
         noteupdate=datetime.datetime.utcnow()+timezone
-        guPiaoNoteList=GuPiaoNote.get_by_id(groupidlist)
-        for i,groupid in groupidlist:
+        groupidlist=[]
+        for gid in self.request.get('groupids','').split(','):
+            if gid:
+                groupidlist.append(gid)
+        guPiaoNoteList=GuPiaoNote.get_by_key_name(groupidlist)
+        for i,groupid in enumerate(groupidlist):
             guPiaoNote=guPiaoNoteList[i]
             if not guPiaoNote:
                 guPiaoNote=GuPiaoNote(key_name=groupid)
@@ -164,11 +167,14 @@ class JoinGuPiao(Page):
                 if group:
                     if userName not in group.member:
                         group.member.append(userName)
+                        group.put()
                     if group.key().id() not in user.memberGroup:
                         if group.key().id() not in user.memberGroupAdd:
                             user.memberGroupAdd.append(group.key().id())
-                            if group.key().id() in user.memberGroupRemove:
-                                user.memberGroupRemove.remove(group.key().id())
+                            user.put()
+                        if group.key().id() in user.memberGroupRemove:
+                            user.memberGroupRemove.remove(group.key().id())
+                            user.put()
                 else:
                     self.response.out.write(resultStr%('fail',u'订阅股票失败，股票已被删除',''))
                     return

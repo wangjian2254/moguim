@@ -3,7 +3,7 @@
 from im.datingmanage import daTingNoteDel, daTingNote, daTingNoteList
 from im.groupinterface import CreateGroup, JoinGroup,  TopNote, DoNote, PutReplay, DelNote, CreateNote, SearchGroup, UserInfo, ShowImg, DeleteNote, DoHotNote
 from im.groupinterfacemanage import CreateGroupM, NoteListM, CreateNoteM, GroupListM, DelNoteM, TopNoteM, Login, Top, Menu,PutAdNote, DoingAdNote, JingPai, RemoveGroupM,GroupInfo, DelNoteImgM
-from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao, JoinGuPiao
+from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao, JoinGuPiao, SyncGuPiao
 from im.rssinterface import RssMsg, SyncGroup
 from im.groupinterface import  Rssjson
 
@@ -65,10 +65,11 @@ app = webapp2.WSGIApplication([
     ('/DoHotNote',DoHotNote),#定期保存热帖
 ###################################
 ##########################有关股票的接口
-    ('/SearchGuPiao',SearchGuPiao),
-    ('/NeedSyncGuPiao',NeedSyncGuPiao),
-    ('/JoinGuPiao',JoinGuPiao),#
-    ('/DeleteNeedSyncGuPiao',DeleteNeedSyncGuPiao),
+    ('/SearchGuPiao',SearchGuPiao),#查找股票
+    ('/SyncGuPiao',SyncGuPiao),#同步股票数据
+    ('/NeedSyncGuPiao',NeedSyncGuPiao),#需要同步的股票
+    ('/JoinGuPiao',JoinGuPiao),#订阅股票
+    ('/DeleteNeedSyncGuPiao',DeleteNeedSyncGuPiao),#删除需要同步的股票
 ###################################
 
     ('/RssMsg',RssMsg),#

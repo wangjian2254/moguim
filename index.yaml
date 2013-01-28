@@ -18,13 +18,13 @@ indexes:
 - kind: DaTingNote
   properties:
   - name: isPub
-  - name: updateTime
-    direction: desc
+  - name: createTime
 
 - kind: DaTingNote
   properties:
   - name: isPub
-  - name: createTime
+  - name: updateTime
+    direction: desc
 
 - kind: Group
   properties:

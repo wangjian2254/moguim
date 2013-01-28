@@ -810,8 +810,10 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                     addNeedSyncGuPiao(group)
                     guPiaoNote=getGuPiaoNote(str(group))
                     if guPiaoNote.content:
-                        group_xml=addGuPiaoImage(xml,group_xml,guPiaoNote.imagestr,timelineint)
+                        group_xml=addGuPiaoImage(xml,datas,group_xml,guPiaoNote.imagestr,timelineint)
                         getMapList(contentlist,fathergroup+'-0',fathergroup,'0',setting.APPCODE,'102',guPiaoNote.content,guPiaoNote.updateTime,status,gupiaoReplayType)
+                        #计算群帖子数量
+                        groupCount(groupdic,group,fathergroup)
                     continue
 
 
@@ -879,8 +881,10 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                     addNeedSyncGuPiao(group)
                     guPiaoNote=getGuPiaoNote(str(group))
                     if timeline<guPiaoNote.updateTime and guPiaoNote.content:
-                        group_xml=addGuPiaoImage(xml,group_xml,guPiaoNote.imagestr,timelineint)
+                        group_xml=addGuPiaoImage(xml,datas,group_xml,guPiaoNote.imagestr,timelineint)
                         getMapList(contentlist,fathergroup+'-0',fathergroup,'0',setting.APPCODE,'102',guPiaoNote.content,guPiaoNote.updateTime,status,gupiaoReplayType)
+                        #计算群帖子数量
+                        groupCount(groupdic,group,fathergroup)
                     continue
 
                 for n in Note.all().filter('group =',group).filter('updateTime >',timeline):
@@ -1028,6 +1032,8 @@ def groupToMap(group):
     if group:
         if group.type==3:
             return {'groupid':group.key().id(),'name':group.name,'head':group.head or 0,'tagid':group.tag,'tagname':getTagName(group.tag),'gonggao':group.gonggao or '','author':group.author,'nickname':getNickName(group.author),'partner':group.partner,'member':group.member,'type':1}
+        if group.type==4:
+            return {'groupid':group.key().id(),'name':group.name,'head':group.head or 0,'tagid':group.tag or 0,'tagname':u'股票','gonggao':group.gonggao or '','author':group.author,'nickname':getNickName(group.author),'partner':[],'member':[],'type':group.type}
         return {'groupid':group.key().id(),'name':group.name,'head':group.head or 0,'tagid':group.tag,'tagname':getTagName(group.tag),'gonggao':group.gonggao or '','author':group.author,'nickname':getNickName(group.author),'partner':group.partner,'member':group.member,'type':group.type}
     else:
         return None
@@ -1061,6 +1067,8 @@ def getTagName(id):
 
 def getNickName(id):
     name=memcache.get('nick'+str(id))
+    if '000'==id:
+        return '蘑菇系统'
     if name:
         return name
     else:

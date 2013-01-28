@@ -53,25 +53,25 @@ def getGuPiaoNote(groupid):
         memcache.set('gupiaonoteg'+groupid,guPiaoNote,36000)
     return guPiaoNote
 
-def getGuPiaoImage(xml):
+def getGuPiaoImage(xml,datas):
     images=xml.createElement('images')
     images.setAttribute('codeid','a777_id')
     images.setAttribute('code','a777')
     images.setAttribute('type','infoupdate')
     images.setAttribute('timespan',str(24*3600))
-    xml.appendChild(images)
+    datas.appendChild(images)
     lib=xml.createElement('lib')
     lib.setAttribute('name','sys')
     images.appendChild(lib)
     group=xml.createElement('group')
     group.setAttribute('name','001')
-    group.setAttribute('text','股票图库')
+    group.setAttribute('text',u'股票图库')
     lib.appendChild(group)
     return group
 
-def addGuPiaoImage(xml,group,imagestr,ver):
+def addGuPiaoImage(xml,datas,group,imagestr,ver):
     if not group:
-        group=getGuPiaoImage(xml)
+        group=getGuPiaoImage(xml,datas)
     img=xml.createElement('img')
     img.setAttribute('id','min%s'%imagestr)
     img.setAttribute('var',str(ver))
