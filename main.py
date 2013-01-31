@@ -6,6 +6,7 @@ from im.groupinterfacemanage import CreateGroupM, NoteListM, CreateNoteM, GroupL
 from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao, JoinGuPiao, SyncGuPiao
 from im.rssinterface import RssMsg, SyncGroup
 from im.groupinterface import  Rssjson
+from im.tool import Test
 
 __author__ = u'王健'
 #!/usr/bin/env python
@@ -96,7 +97,7 @@ app = webapp2.WSGIApplication([
 
     (r'/rssjson',Rssjson),
     (r'/printOnline',PrintOnline),
-#    ('/PubWeibo',PubWeib),
+    ('/test',Test),
 
 
 

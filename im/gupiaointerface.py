@@ -137,6 +137,7 @@ class JoinGuPiao(Page):
                     group.put()
                     guPiaoNote=GuPiaoNote(key_name='g'+str(group.key().id()))
                     guPiaoNote.imagestr='_%s_%s'%(realNo,type_n)
+                    guPiaoNote.updateTime=datetime.datetime.utcnow()+timezone
                     guPiaoNote.put()
                     gupiaoToGroup=GupiaoToGroup(key_name='g'+dm)
                     gupiaoToGroup.group=group.key().id()
@@ -156,10 +157,17 @@ class JoinGuPiao(Page):
                     if result.status_code != 200 :
                         group.delete()
                         gupiaoToGroup.delete()
+                        guPiaoNote.delete()
                         self.response.out.write(resultStr%('fail',u'订阅股票失败，请稍后再试',''))
                         return
                     else:
                         memcache.set('gupiaodm'+dm,gupiaoToGroup,36000)
+                        logging.info(result.content)
+                        logging.info(guPiaoNote.content)
+                        if result.content!=guPiaoNote.content:
+                            guPiaoNote.content=result.content.decode('utf-8')
+                            guPiaoNote.updateTime=datetime.datetime.utcnow()+timezone
+                            guPiaoNote.put()
 
 
                 else:

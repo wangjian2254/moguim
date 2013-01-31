@@ -3,6 +3,7 @@
 #Time: 下午10:28
 from google.appengine.api import memcache
 from im.model.models import User, UserPoint, GuPiaoNote
+from tools.page import Page
 
 __author__ = u'王健'
 
@@ -89,3 +90,11 @@ def addGuPiaoImage(xml,datas,group,imagestr,ver):
     img.setAttribute('var',str(ver))
     group.appendChild(img)
     return group
+
+
+class Test(Page):
+    def get(self):
+        for chart in 'abcdefghijklmnopqrstuvwxyz':
+            self.response.out.write(chart)
+            self.response.out.write('</bar>')
+            self.response.out.write('<img src="http://ichart.finance.yahoo.com/%s?s=601006.sz"/>'%chart)
