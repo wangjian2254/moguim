@@ -3,7 +3,7 @@
 from im.datingmanage import daTingNoteDel, daTingNote, daTingNoteList
 from im.groupinterface import CreateGroup, JoinGroup,  TopNote, DoNote, PutReplay, DelNote, CreateNote, SearchGroup, UserInfo, ShowImg, DeleteNote, DoHotNote
 from im.groupinterfacemanage import CreateGroupM, NoteListM, CreateNoteM, GroupListM, DelNoteM, TopNoteM, Login, Top, Menu,PutAdNote, DoingAdNote, JingPai, RemoveGroupM,GroupInfo, DelNoteImgM
-from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao, JoinGuPiao, SyncGuPiao
+from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao, JoinGuPiao, SyncGuPiao, SyncGuPiaoByID
 from im.rssinterface import RssMsg, SyncGroup
 from im.groupinterface import  Rssjson
 from im.tool import Test
@@ -70,6 +70,7 @@ app = webapp2.WSGIApplication([
     ('/SyncGuPiao',SyncGuPiao),#同步股票数据
     ('/NeedSyncGuPiao',NeedSyncGuPiao),#需要同步的股票
     ('/JoinGuPiao',JoinGuPiao),#订阅股票
+    ('/syncGuPiaoByID',SyncGuPiaoByID),#根据股票id刷新股票
     ('/DeleteNeedSyncGuPiao',DeleteNeedSyncGuPiao),#删除需要同步的股票
 ###################################
 

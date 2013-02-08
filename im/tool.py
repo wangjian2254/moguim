@@ -55,7 +55,7 @@ def getGuPiaoNote(groupid):
     return guPiaoNote
 
 def getGuPiaoImage(xml,datas):
-    images=xml.createElement('images')
+    images=xml.createElement('imagesTemp')
     images.setAttribute('codeid','a777_id')
     images.setAttribute('code','a777')
     images.setAttribute('type','infoupdate')
@@ -81,14 +81,14 @@ def addGuPiaoImage(xml,datas,group,imagestr,ver):
     img.setAttribute('id','daily%s'%imagestr)
     img.setAttribute('var',str(ver))
     group.appendChild(img)
-    img=xml.createElement('img')
-    img.setAttribute('id','weekly%s'%imagestr)
-    img.setAttribute('var',str(ver))
-    group.appendChild(img)
-    img=xml.createElement('img')
-    img.setAttribute('id','monthly%s'%imagestr)
-    img.setAttribute('var',str(ver))
-    group.appendChild(img)
+#    img=xml.createElement('img')
+#    img.setAttribute('id','weekly%s'%imagestr)
+#    img.setAttribute('var',str(ver))
+#    group.appendChild(img)
+#    img=xml.createElement('img')
+#    img.setAttribute('id','monthly%s'%imagestr)
+#    img.setAttribute('var',str(ver))
+#    group.appendChild(img)
     return group
 
 

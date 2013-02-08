@@ -94,6 +94,35 @@ class DeleteNeedSyncGuPiao(Page):
             kl=gupiaogroupid.split(',')
             memcache.delete_multi(kl)
         return
+class SyncGuPiaoByID(Page):
+    def post(self):
+        #删除需要同步的股票di缓存
+        groupid=self.request.get('gupiaoid',0)
+        ###同步给股票同步应用
+        result = urlfetch.fetch(
+            url =setting.GUPIAOURL+'/syncGuPiaoByID?groupid=%s'%groupid,
+#                    payload = login_data,
+            method = urlfetch.GET,
+            headers = {'Content-Type':'application/x-www-form-urlencoded',
+                       'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6'},
+            follow_redirects = False,deadline=20)
+        if result.status_code != 200 :
+            self.response.out.write(resultStr%('fail',u'股票数据获取失败，请稍后再试',''))
+            return
+        else:
+            guPiaoNote=GuPiaoNote.get_by_key_name(key_names='g'+str(groupid))
+            logging.info(groupid)
+            logging.info(result.content.decode('utf-8'))
+            logging.info(guPiaoNote.content)
+            if result.content and result.content.decode('utf-8')!=guPiaoNote.content:
+                logging.info(u'not same')
+                guPiaoNote.content=result.content.decode('utf-8')
+                guPiaoNote.updateTime=datetime.datetime.utcnow()+timezone
+                guPiaoNote.put()
+                memcache.set('gupiaonoteg'+groupid,guPiaoNote,36000)
+                self.response.out.write(resultStr%('success','',setting.WEBURL[7:]+'/InfoUpdate'))
+            else:
+                self.response.out.write(resultStr%('fail',u'股票数据已经是最新了',''))
 
 
 #参加、退出群
@@ -129,10 +158,18 @@ class JoinGuPiao(Page):
                 if not gupiaoToGroup:
                     group=Group()
                     group.name=name
+#                    if type_n =='11':
+#                        group.gonggao=u'A股'
+#                    if type_n =='12':
+#                        group.gonggao=u'B股'
+                    if type_n =='31':
+                        group.gonggao=u'[港]'
+                    if type_n =='41':
+                        group.gonggao=u'[美]'
                     group.type=4
                     group.apptype='4'
                     group.author='000'
-                    group.head=0
+                    group.head=int(type_n)
                     group.notecount=1
                     group.put()
                     guPiaoNote=GuPiaoNote(key_name='g'+str(group.key().id()))
