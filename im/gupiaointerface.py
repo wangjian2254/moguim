@@ -141,12 +141,18 @@ class JoinGuPiao(Page):
             if do=='1':
                 #### 下面是加入群
                 realNo=dmall
+                if dmall=='sh000001':
+                    dm=dmall
                 if type_n in ['11','12']:
                     pass
+#                    dm=dmall
                 elif type_n == '31':
                     realNo='hk'+dm
+                    #dm=realNo
+
                 elif type_n=='41':
                     realNo='gb_'+dm
+                    #dm=realNo
                 else:
                     self.response.out.write(resultStr%('fail',u'只能订阅A股、B股、港股、美股',''))
                     return
