@@ -7,7 +7,7 @@ import time
 import uuid
 
 from im.model.models import Tag, Group, Note, Replay, User, MecacheNote, Img, HoTNote, AdNote, RssNote, RssImg, DaTingNote, PaiMai
-from im.tool import getorAddUser, doUserPoint, addNeedSyncGuPiao, getGuPiaoNote, addGuPiaoImage
+from im.tool import getorAddUser, doUserPoint, addNeedSyncGuPiao, getGuPiaoNote, addGuPiaoImage, getNewRssList
 import setting
 from tools.page import Page
 import json
@@ -275,7 +275,13 @@ class SearchGroup(Page):
             for g in grouplist:
                 l.append(groupToMap(g))
         if not tagname and not tagid:
-            grouplist=Group.all().order('-__key__').fetch(20)
+            newrsslist=getNewRssList()
+            groupids=newrsslist.groupids
+            groupids.reverse()
+            if groupids:
+                grouplist=Group.get_by_id(groupids)
+            else:
+                grouplist=[]
             for g in grouplist:
                 l.append(groupToMap(g))
         self.response.out.write(json.dumps(l))

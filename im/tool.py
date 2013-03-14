@@ -2,7 +2,7 @@
 #Date: 11-12-8
 #Time: 下午10:28
 from google.appengine.api import memcache
-from im.model.models import User, UserPoint, GuPiaoNote
+from im.model.models import User, UserPoint, GuPiaoNote, NewRSSList
 from tools.page import Page
 
 __author__ = u'王健'
@@ -56,7 +56,7 @@ def getGuPiaoNote(groupid):
 
 def getGuPiaoImage(xml,datas):
     images=xml.createElement('imagesTemp')
-    images.setAttribute('codeid','a777_id')
+    images.setAttribute('codeid','a777_1')
     images.setAttribute('code','a777')
     images.setAttribute('type','infoupdate')
     images.setAttribute('timespan',str(24*3600))
@@ -98,3 +98,11 @@ class Test(Page):
             self.response.out.write(chart)
             self.response.out.write('</bar>')
             self.response.out.write('<img src="http://ichart.finance.yahoo.com/%s?s=601006.sz"/>'%chart)
+
+
+def getNewRssList():
+    newrsslist=memcache.get('newrsslist')
+    if not newrsslist:
+        newrsslist=NewRSSList.get_by_key_name('newrsslist')
+        memcache.set('newrsslist',newrsslist,360000)
+    return newrsslist

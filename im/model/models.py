@@ -156,3 +156,7 @@ class GuPiaoNote(db.Model):#股票行情 帖子
     content=db.TextProperty()
     imagestr=db.StringProperty(indexed=False)
     updateTime=db.DateTimeProperty(auto_now=True,indexed=False)
+
+
+class NewRSSList(db.Model):
+    groupids=db.ListProperty(item_type=int,indexed=False)

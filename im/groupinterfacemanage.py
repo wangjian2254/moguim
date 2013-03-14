@@ -6,8 +6,8 @@ import re
 import time
 import uuid
 
-from im.model.models import Tag, Group, Note, Replay, User, AdNote, Img,PaiMai
-from im.tool import getorAddUser, getorAddUserPoint
+from im.model.models import Tag, Group, Note, Replay, User, AdNote, Img,PaiMai, NewRSSList
+from im.tool import getorAddUser, getorAddUserPoint, getNewRssList
 import setting
 from tools.page import Page
 import json
@@ -113,7 +113,7 @@ class GroupListM(Page):
             list=Group.all().filter('author =',username)
         listgroup=[]
         for group in list:
-            group.tagname=tagmap[str(group.tag)]
+            group.tagname=tagmap.get(str(group.tag),'')
             listgroup.append(group)
         self.render('templates/groupList.html',{'list':listgroup,'tagmap':tagmap,'isadmin':('000'==username and [True] or [False])[0]})
 class RemoveGroupM(Page):
@@ -161,7 +161,7 @@ class RemoveGroupM(Page):
                     user.createGroupAdd.remove(groupidlist[i])
                     ischange=True
             else:
-                group.tagname=tagmap[str(group.tag)]
+                group.tagname=tagmap.get(str(group.tag),'')
                 listgroup.append(group)
         if ischange:
             user.put()
@@ -1038,3 +1038,69 @@ class Menu(Page):
   def get(self):
       self.render('templates/menu.html',{})
 
+
+class NewRSSListPage(Page):
+  @login_required
+  def get(self):
+      msgid=self.request.get('msg')
+      msg=None
+      if msgid:
+          msg=memcache.get(msgid)
+      newrsslist=getNewRssList()
+      if newrsslist==None:
+          newrsslist=NewRSSList(key_name='newrsslist')
+          newrsslist.put()
+          memcache.set('newrsslist',newrsslist,360000)
+      groupids=newrsslist.groupids
+      groupids.reverse()
+      if groupids:
+          grouplist=Group.get_by_id(groupids)
+      else:
+          grouplist=[]
+      self.render('templates/newrss.html',{'list':grouplist,'msg':msg})
+
+
+class NewRSSAddPage(Page):
+    @login_required
+    def post(self):
+        groupid=self.request.get('groupid')
+        if groupid:
+            groupid=int(groupid)
+            newrsslist=getNewRssList()
+
+            if not  newrsslist or not Group.get_by_id(groupid) :
+                msg=u'添加失败，群不存在。'
+            elif newrsslist and groupid not in newrsslist.groupids:
+                newrsslist.groupids.append(groupid)
+                newrsslist.put()
+                memcache.set('newrsslist',newrsslist,360000)
+                msg=u'添加成功。'
+            else:
+                msg=u'添加失败，已经存在。'
+        else:
+            msg=u'添加失败，没有群号'
+
+        msgid=str(uuid.uuid4())
+        memcache.set(msgid,msg,3600)
+        self.redirect('/NewRSSListM?msg='+msgid)
+
+class NewRSSDelPage(Page):
+    @login_required
+    def get(self):
+        groupid=self.request.get('groupid')
+        if groupid:
+            groupid=int(groupid)
+            newrsslist=getNewRssList()
+            if not  newrsslist :
+                msg=u'删除失败。'
+            if newrsslist and groupid  in newrsslist.groupids:
+                newrsslist.groupids.remove(groupid)
+                newrsslist.put()
+                memcache.set('newrsslist',newrsslist,360000)
+                msg=u'删除成功。'
+        else:
+            msg=u'删除失败，没有群号'
+
+        msgid=str(uuid.uuid4())
+        memcache.set(msgid,msg,3600)
+        self.redirect('/NewRSSListM?msg='+msgid)

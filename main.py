@@ -2,7 +2,7 @@
 #
 from im.datingmanage import daTingNoteDel, daTingNote, daTingNoteList
 from im.groupinterface import CreateGroup, JoinGroup,  TopNote, DoNote, PutReplay, DelNote, CreateNote, SearchGroup, UserInfo, ShowImg, DeleteNote, DoHotNote
-from im.groupinterfacemanage import CreateGroupM, NoteListM, CreateNoteM, GroupListM, DelNoteM, TopNoteM, Login, Top, Menu,PutAdNote, DoingAdNote, JingPai, RemoveGroupM,GroupInfo, DelNoteImgM
+from im.groupinterfacemanage import CreateGroupM, NoteListM, CreateNoteM, GroupListM, DelNoteM, TopNoteM, Login, Top, Menu,PutAdNote, DoingAdNote, JingPai, RemoveGroupM,GroupInfo, DelNoteImgM, NewRSSListPage, NewRSSAddPage, NewRSSDelPage
 from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao, JoinGuPiao, SyncGuPiao, SyncGuPiaoByID
 from im.rssinterface import RssMsg, SyncGroup
 from im.groupinterface import  Rssjson
@@ -93,6 +93,10 @@ app = webapp2.WSGIApplication([
     ('/daTingNoteList',daTingNoteList),#
     ('/daTingNote',daTingNote),#
     ('/daTingNoteDel',daTingNoteDel),#
+
+    ('/NewRSSListM',NewRSSListPage),
+    ('/NewRSSAddM',NewRSSAddPage),
+    ('/NewRSSDelM',NewRSSDelPage),
 ############################### 生成rss json
 
 

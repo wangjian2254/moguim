@@ -66,12 +66,23 @@ class SyncGuPiao(Page):
             guPiaoNote=guPiaoNoteList[i]
             if not guPiaoNote:
                 guPiaoNote=GuPiaoNote(key_name=groupid)
-            if self.request.get(groupid)!=guPiaoNote.content:
+            if self.request.get(groupid,'').find("'type':'11'")>0 or self.request.get(groupid,'').find("'type':'12'")>0:
+                tmpgupiaostr=self.request.get(groupid,'').split(',')[0]+self.request.get(groupid,'')[-13:-8]
+                tmpgupiaosave=guPiaoNote.content.split(',')[0]+guPiaoNote.content[-13:-8]
+            else:
+                tmpgupiaostr=self.request.get(groupid,'')
+                tmpgupiaosave=guPiaoNote.content
+            if tmpgupiaostr!=tmpgupiaosave:
+#                logging.info('old:'+guPiaoNote.content)
+#                logging.info('new:'+self.request.get(groupid))
                 guPiaoNote.content=self.request.get(groupid)
                 guPiaoNote.updateTime=noteupdate
 #                guPiaoNote.imagestr=self.request.get('image'+groupid)
                 guPiaoNote.put()
                 memcache.set('gupiaonote'+groupid,guPiaoNote,36000)
+            else:
+                logging.info('no save0:'+self.request.get(groupid,''))
+                logging.info('no save0:'+guPiaoNote.content)
 
 
 
