@@ -1,4 +1,4 @@
-application: sz-groups
+application: mogu2-im
 version: 4-gupiao
 runtime: python27
 api_version: 1
