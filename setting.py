@@ -18,7 +18,7 @@ APPCODE_ID='a4_1'
 
 HOMEURL='http://blog.zxxsbook.com'
 
-APPCODE_APPTYPE={'0':u'新闻订阅','1':u'聊天','3':u'群','4':u'股票','999':u'系统信息'}
+APPCODE_APPTYPE={'0':u'新闻订阅','1':u'聊天','3':u'群','4':u'股票','5':u'微论坛','999':u'系统信息'}
 
 AdNoteTime='20120903'
 

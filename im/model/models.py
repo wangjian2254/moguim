@@ -160,3 +160,59 @@ class GuPiaoNote(db.Model):#股票行情 帖子
 
 class NewRSSList(db.Model):
     groupids=db.ListProperty(item_type=int,indexed=False)
+
+
+
+##################
+################## 微论坛 相关model
+
+class WeiNote(db.Model):
+    '''
+    微论坛 的帖子
+    '''
+    group=db.IntegerProperty(verbose_name=u'群id')
+    title=db.StringProperty(indexed=False,verbose_name=u'帖子标题')
+    content=db.TextProperty(indexed=False,verbose_name=u'帖子内容')
+    type=db.IntegerProperty(default=0,indexed=False,verbose_name=u'帖子类型')#0为普通帖子， 1为股票pk贴
+    has_Image=db.BooleanProperty(default=False,indexed=False,verbose_name=u'是否带图')
+    author=db.StringProperty(verbose_name=u'作者')
+    updateTime=db.DateTimeProperty(verbose_name=u'最后一次保存时间')
+    isDel=db.BooleanProperty(default=False,verbose_name=u'是否已经删除')
+
+    def put(self, **kwargs):
+        if self.title:
+            self.title=self.title.replace('<','[').replace('>',']').replace("'",u"“").replace('"',u"“")
+        if self.content:
+            self.content=self.content.replace('<','[').replace('>',']')
+        super(WeiNote,self).put(**kwargs)
+        memcache.set('WeiNote'+str(self.key().id()),self,36000)
+
+class WeiNoteReplay(db.Model):
+    '''
+    帖子的评论
+    '''
+    note=db.IntegerProperty(verbose_name=u'帖子id')
+    content=db.TextProperty(indexed=False,verbose_name=u'帖子内容')
+    updateTime=db.DateTimeProperty(verbose_name=u'最后一次保存时间')
+    author=db.StringProperty(verbose_name=u'作者')
+    replay=db.StringListProperty(indexed=False,verbose_name=u'评论的评论')# {"userid":"","username":"","to_userid":"","to_username":"","updateTime":"","content":""}
+
+
+class WeiNotePoint(db.Model):
+    '''
+    WeiNote 的积分记录，之所以分开两个类，是为了减少数据库写操作
+    '''
+    group=db.IntegerProperty(verbose_name=u'群id')
+    point=db.IntegerProperty(verbose_name=u'帖子积分')
+    up=db.IntegerProperty(default=0,indexed=False,verbose_name=u'顶')
+    down=db.IntegerProperty(default=0,indexed=False,verbose_name=u'踩')
+
+class WeiUser(db.Model):
+    '''
+    微论坛的 论坛积分
+    '''
+    user=db.StringProperty(verbose_name=u'用户')
+    group=db.IntegerProperty(verbose_name=u'群id')
+    point=db.IntegerProperty(verbose_name=u'群积分')
+    shoucang=db.ListProperty(item_type=int,indexed=False)
+
