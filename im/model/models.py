@@ -174,7 +174,7 @@ class WeiNote(db.Model):
     title=db.StringProperty(indexed=False,verbose_name=u'帖子标题')
     content=db.TextProperty(indexed=False,verbose_name=u'帖子内容')
     type=db.IntegerProperty(default=0,indexed=False,verbose_name=u'帖子类型')#0为普通帖子， 1为股票pk贴
-    has_Image=db.BooleanProperty(default=False,indexed=False,verbose_name=u'是否带图')
+    image_list=db.ListProperty(item_type=int,indexed=False,verbose_name=u'帖子配图')
     author=db.StringProperty(verbose_name=u'作者')
     updateTime=db.DateTimeProperty(verbose_name=u'最后一次保存时间')
     isDel=db.BooleanProperty(default=False,verbose_name=u'是否已经删除')
@@ -194,6 +194,7 @@ class WeiNoteReplay(db.Model):
     note=db.IntegerProperty(verbose_name=u'帖子id')
     content=db.TextProperty(indexed=False,verbose_name=u'帖子内容')
     updateTime=db.DateTimeProperty(verbose_name=u'最后一次保存时间')
+    user=db.StringProperty(verbose_name=u'帖子的作者，方便产生通知')
     author=db.StringProperty(verbose_name=u'作者')
     replay=db.StringListProperty(indexed=False,verbose_name=u'评论的评论')# {"userid":"","username":"","to_userid":"","to_username":"","updateTime":"","content":""}
 
@@ -214,5 +215,12 @@ class WeiUser(db.Model):
     user=db.StringProperty(verbose_name=u'用户')
     group=db.IntegerProperty(verbose_name=u'群id')
     point=db.IntegerProperty(verbose_name=u'群积分')
-    shoucang=db.ListProperty(item_type=int,indexed=False)
+
+class WeiShouCang(db.Model):
+    '''
+    微论坛 用户收藏的帖子
+    '''
+    user=db.StringProperty(verbose_name=u'用户')
+    group=db.IntegerProperty(verbose_name=u'群id')
+    shoucang=db.ListProperty(item_type=int,indexed=False,verbose_name=u'收藏帖子')
 
