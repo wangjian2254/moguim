@@ -796,7 +796,8 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                 #### 判断是否rss群 ，单独处理
                 ####
                 #logging.info('g:'+str(groupmap[str(group)].type))
-                if groupmap[str(group)].type==3:
+#                if groupmap[str(group)].type==3:
+                if groupmap[str(group)].apptype=='0' or groupmap[str(group)].type==3:
                     rssnotelist=getRssNoteList(group)
 #                    if not rssnotelist:
 #                        rssnote=RssNote.get_by_key_name('rss'+str(group))
@@ -866,7 +867,7 @@ def infoUpdateGroup(self,datas,getMapList,infoallxmldic,xml,user):
                 ####
                 #### 判断是否rss群 ，单独处理
                 ####
-                if groupmap[str(group)].type==3:
+                if groupmap[str(group)].apptype=='0'or groupmap[str(group)].type==3:
                     rssnotelist=getRssNoteList(group)
 #                    if not rssnotelist:
 #                        rssnote=RssNote.get_by_key_name('rss'+str(group))

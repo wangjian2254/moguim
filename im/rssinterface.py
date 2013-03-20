@@ -27,7 +27,7 @@ class SyncGroup(Page):
             groupgonggao=self.request.get("GroupGonggao")
             groupId=self.request.get("GroupId",0)
             groupHead=self.request.get("GroupHead",0)
-            groupAppType=self.request.get("GroupAppType",'2')
+            groupAppType=self.request.get("GroupAppType",'0')
             type=self.request.get("GroupType")
             # rss群特殊对待
             type=3

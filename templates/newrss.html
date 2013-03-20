@@ -28,7 +28,7 @@
 <td align="center">{{content.key().id()}}</td>
 <td align="center"><a href="/NoteListM?type=groupid&value={{content.key().id()}}">{{content.name|striptags}}</a></td>
 <td>{{content.author}}</td>
-<td>{% if content.type==1 %}第一类型{%else%}第二类型{%endif%}</td>
+<td>{% if content.type==1 %}第一类型{%else%}{% if content.type==3 %}第一类型{%else%}第二类型{%endif%}{%endif%}</td>
 <td align="center">{{content.tagname|striptags}}</td>
 <td align="center">{{content.gonggao|striptags}}</td>
 <td align="center">{{content.notenum}}</td>
