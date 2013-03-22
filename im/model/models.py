@@ -224,3 +224,29 @@ class WeiShouCang(db.Model):
     group=db.IntegerProperty(verbose_name=u'群id')
     shoucang=db.ListProperty(item_type=int,indexed=False,verbose_name=u'收藏帖子')
 
+
+##############################
+############################## 股票PK 贴。
+class WeiGuPiaoLog(db.Model):
+    '''
+    股票PK的日志贴。
+    记录某一天的收市时的 价格。
+    用户则用他的pk时的值进行比较。胜则加分，拜则减分。
+
+    '''
+    group=db.IntegerProperty(verbose_name=u'群id')
+    date=db.StringProperty(verbose_name=u'日期')
+    price=db.IntegerProperty(indexed=False,verbose_name=u'收市价格')
+
+class WeiGuPiaoUserLog(db.Model):
+    '''
+    用户pk的记录。
+    用户同步时，计算未处理过的pk记录。
+    '''
+    group=db.IntegerProperty(verbose_name=u'群id')
+    user=db.StringProperty(verbose_name=u'用户')
+    date=db.StringProperty(verbose_name=u'日期')
+    price=db.IntegerProperty(verbose_name=u'PK价格价格')
+    type=db.StringProperty(verbose_name=u'PK方式')
+    check=db.BooleanProperty(default=False,verbose_name=u'是否经过处理')
+

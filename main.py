@@ -77,6 +77,8 @@ app = webapp2.WSGIApplication([
     ('/RssMsg',RssMsg),#
     ('/SyncGroup',SyncGroup),#
     ('/downLoad', ShowImg),
+###################################
+    ('/uploadImage', ShowImg),
 
 ############################管理界面
 
