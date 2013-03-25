@@ -2,10 +2,17 @@
 #author:u'王健'
 #Date: 13-3-21
 #Time: 下午6:51
+import logging
 import urllib
+import datetime
+from im.model.models import WeiNote
 from tools.page import Page
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
+
+
+timezone=datetime.timedelta(hours =8)
+resultStr='{"result":"%s","message":"%s","url":"%s"}'
 
 __author__ = u'王健'
 
@@ -20,7 +27,42 @@ class CreateWeiNote(Page):
         upload_url = blobstore.create_upload_url('/uploadImage')
         self.flashhtml(upload_url)
     def post(self):
-        pass
+        groupid=self.request.get('groupid',0)
+        weinoteid=self.request.get('weinoteid','')
+        title=self.request.get('title','')
+        content=self.request.get('content','')
+        type=self.request.get('type','0')
+        image_list=self.request.get('image_list','')
+        author=self.request.get('author','')
+        if not groupid or not title or not author:
+            self.flashhtml(resultStr%('fail',u'标题、群号、用户号为必填项',''))
+            return
+        try:
+            if not weinoteid:
+                weinote=WeiNote()
+            else:
+                weinote=WeiNote.get_by_id(int(weinoteid))
+            weinote.group=int(groupid)
+            weinote.title=title
+            weinote.content=content
+            weinote.type=int(type)
+            for imageid in image_list.split(','):
+                weinote.image_list.append(int(imageid))
+            if author[0]=='u':
+                weinote.author=author
+            else:
+                weinote.author='u'+author
+            weinote.updateTime=datetime.datetime.utcnow()+timezone
+            weinote.put()
+            if not weinoteid:
+                self.flashhtml(resultStr%('success',u'发布帖子成功',''))
+            else:
+                self.flashhtml(resultStr%('success',u'修改帖子成功',''))
+            return
+        except Exception,e:
+            self.flashhtml(resultStr%('fail',u'服务器异常，请稍后再操作。',''))
+            logging.error(str(e))
+            return
 
 class ReplayWeiNote(Page):
     '''

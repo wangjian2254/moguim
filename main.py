@@ -7,6 +7,7 @@ from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPia
 from im.rssinterface import RssMsg, SyncGroup
 from im.groupinterface import  Rssjson
 from im.tool import Test
+from im.weigroupinterface import UploadHandler, ServeHandler, CreateWeiNote, ReplayWeiNote, QueryWeiNote, DoWeiNote, GroupUserInfo
 
 __author__ = u'王健'
 #!/usr/bin/env python
@@ -77,8 +78,16 @@ app = webapp2.WSGIApplication([
     ('/RssMsg',RssMsg),#
     ('/SyncGroup',SyncGroup),#
     ('/downLoad', ShowImg),
-###################################
-    ('/uploadImage', ShowImg),
+################################### 微论坛基本接口
+    ('/uploadImage', UploadHandler),
+    ('/downLoadImage', ServeHandler),
+    ('/CreateWeiNote', CreateWeiNote),
+    ('/ReplayWeiNote', ReplayWeiNote),
+    ('/QueryWeiNote', QueryWeiNote),
+    ('/DoWeiNote', DoWeiNote),
+    ('/GroupUserInfo', GroupUserInfo),
+#################################### 股票微论坛接口
+
 
 ############################管理界面
 
