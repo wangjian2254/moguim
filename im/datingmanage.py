@@ -6,12 +6,13 @@ import logging
 import re
 import uuid
 from google.appengine.api import memcache
-from im.model.models import DaTingNote, Img
-from groupinterfacemanage import getGroup
 from google.appengine.ext import db
 from google.appengine.api import images
 
 import datetime
+from groupinterfacemanage import getGroup
+from model.models import DaTingNote,Img
+
 import setting
 
 timezone=datetime.timedelta(hours =8)
@@ -28,6 +29,7 @@ class daTingNote(Page):
         note={}
         imglist=[]
         if noteid:
+
             note=DaTingNote.get_by_id(int(noteid))
             if note:
                 imgstrlist=re.findall('(?i)templink/([^/\s\?&]*)/',note.content)
@@ -87,7 +89,7 @@ class daTingNote(Page):
 
 
             if mod=='add':
-                    note=DaTingNote()
+                note=DaTingNote()
             else:
                 msg=u'修改帖子成功'
                 note=DaTingNote.get_by_id(noteid)

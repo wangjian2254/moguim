@@ -8,6 +8,7 @@
         <option name="templatesFolder" value="$MODULE_DIR$/templates" />
         <option name="email" value="wangjian2254@gmail.com" />
         <option name="gp" value="dfdddfc0df9adf9fdf93df93df98df98df9fdf9e" />
+        <option name="oauth2" value="false" />
       </configuration>
     </facet>
   </component>

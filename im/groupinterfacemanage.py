@@ -6,8 +6,8 @@ import re
 import time
 import uuid
 
-from im.model.models import Tag, Group, Note, Replay, User, AdNote, Img,PaiMai, NewRSSList
-from im.tool import getorAddUser, getorAddUserPoint, getNewRssList
+from model.models import Tag, Group, Note, Replay, User, AdNote, Img,PaiMai, NewRSSList
+from tool import getorAddUser, getorAddUserPoint, getNewRssList
 import setting
 from tools.page import Page
 import json
@@ -504,7 +504,7 @@ class CreateNoteM(Page):
                     self.response.out.write('2')
                     return
             elif group.type==2:
-                if username!=group.author and username!=note.author:
+                if username!=group.author and username!=group.author:
                     self.response.out.write('2')
                     return
             if mod=='add':

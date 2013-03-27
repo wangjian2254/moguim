@@ -2,7 +2,7 @@
 #Date: 11-12-8
 #Time: 下午10:28
 from google.appengine.api import memcache
-from im.model.models import User, UserPoint, GuPiaoNote, NewRSSList
+from model.models import User, UserPoint, GuPiaoNote, NewRSSList
 from tools.page import Page
 
 __author__ = u'王健'

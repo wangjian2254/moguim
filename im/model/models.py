@@ -194,7 +194,7 @@ class WeiNoteReplay(db.Model):
     note=db.IntegerProperty(verbose_name=u'帖子id')
     content=db.TextProperty(indexed=False,verbose_name=u'帖子内容')
     updateTime=db.DateTimeProperty(verbose_name=u'最后一次保存时间')
-    user=db.StringProperty(verbose_name=u'帖子的作者，方便产生通知')
+    image_list=db.ListProperty(item_type=int,indexed=False,verbose_name=u'帖子配图')
     author=db.StringProperty(verbose_name=u'作者')
     replay=db.StringListProperty(indexed=False,verbose_name=u'评论的评论')# {"userid":"","username":"","to_userid":"","to_username":"","updateTime":"","content":""}
 

@@ -4,7 +4,7 @@
 #Time: 下午7:45
 import datetime,time
 import re
-from im.model.models import Tag, Group, Img,  Replay, RssNote, RssImg
+from model.models import Tag, Group, Img,  Replay, RssNote, RssImg
 from google.appengine.ext import db
 import setting
 
@@ -13,7 +13,7 @@ from google.appengine.api import memcache
 timezone=datetime.timedelta(hours =8)
 
 __author__ = u'王健'
-from im.tool import getorAddUser
+from tool import getorAddUser
 from tools.page import Page
 import logging
 

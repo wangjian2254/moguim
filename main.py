@@ -1,13 +1,5 @@
 #coding=utf-8
 #
-from im.datingmanage import daTingNoteDel, daTingNote, daTingNoteList
-from im.groupinterface import CreateGroup, JoinGroup,  TopNote, DoNote, PutReplay, DelNote, CreateNote, SearchGroup, UserInfo, ShowImg, DeleteNote, DoHotNote
-from im.groupinterfacemanage import CreateGroupM, NoteListM, CreateNoteM, GroupListM, DelNoteM, TopNoteM, Login, Top, Menu,PutAdNote, DoingAdNote, JingPai, RemoveGroupM,GroupInfo, DelNoteImgM, NewRSSListPage, NewRSSAddPage, NewRSSDelPage
-from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao, JoinGuPiao, SyncGuPiao, SyncGuPiaoByID
-from im.rssinterface import RssMsg, SyncGroup
-from im.groupinterface import  Rssjson
-from im.tool import Test
-from im.weigroupinterface import UploadHandler, ServeHandler, CreateWeiNote, ReplayWeiNote, QueryWeiNote, DoWeiNote, GroupUserInfo
 
 __author__ = u'王健'
 #!/usr/bin/env python
@@ -28,6 +20,15 @@ __author__ = u'王健'
 #
 
 import webapp2
+from im.datingmanage import daTingNoteDel, daTingNote, daTingNoteList
+from im.groupinterface import CreateGroup, JoinGroup,  TopNote, DoNote, PutReplay, DelNote, CreateNote, SearchGroup, UserInfo, ShowImg, DeleteNote, DoHotNote
+from im.groupinterfacemanage import CreateGroupM, NoteListM, CreateNoteM, GroupListM, DelNoteM, TopNoteM, Login, Top, Menu,PutAdNote, DoingAdNote, JingPai, RemoveGroupM,GroupInfo, DelNoteImgM, NewRSSListPage, NewRSSAddPage, NewRSSDelPage
+from im.gupiaointerface import SearchGuPiao, NeedSyncGuPiao, DeleteNeedSyncGuPiao, JoinGuPiao, SyncGuPiao, SyncGuPiaoByID
+from im.rssinterface import RssMsg, SyncGroup
+from im.groupinterface import  Rssjson
+from im.tool import Test
+from im.weigroupinterface import UploadHandler, ServeHandler, CreateWeiNote, ReplayWeiNote, QueryWeiNote, DoWeiNote, GroupUserInfo
+
 from im.interface import Index, InfoAll, InfoUpdate, DelFriend, Search, SendSay, UpdateInfo, AddFriend, GroupHtml, PrintOnline
 
 
@@ -119,11 +120,11 @@ app = webapp2.WSGIApplication([
 
                               ],
                                          debug=True)
-def main():
-    pass
-
-#    util.run_wsgi_app(app)
-
-
-if __name__ == '__main__':
-    main()
+# def main():
+#     pass
+#
+# #    util.run_wsgi_app(app)
+#
+#
+# if __name__ == '__main__':
+#     main()

@@ -1,7 +1,7 @@
 #coding=utf-8
-from im.model.models import GupiaoToGroup, Group, GuPiaoNote
-from im.rssinterface import memacheGroup
-from im.tool import getorAddUser
+from model.models import GupiaoToGroup, Group, GuPiaoNote
+from rssinterface import memacheGroup
+from tool import getorAddUser
 import setting
 
 __author__ = 'Administrator'

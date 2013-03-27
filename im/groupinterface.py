@@ -5,9 +5,9 @@
 import pickle
 import time
 import uuid
-
-from im.model.models import Tag, Group, Note, Replay, User, MecacheNote, Img, HoTNote, AdNote, RssNote, RssImg, DaTingNote, PaiMai
-from im.tool import getorAddUser, doUserPoint, addNeedSyncGuPiao, getGuPiaoNote, addGuPiaoImage, getNewRssList
+#import im.model.models
+from model.models import Tag, Group, Note, Replay, User, MecacheNote, Img, HoTNote, AdNote, RssNote, RssImg, DaTingNote, PaiMai
+from tool import getorAddUser, doUserPoint, addNeedSyncGuPiao, getGuPiaoNote, addGuPiaoImage, getNewRssList
 import setting
 from tools.page import Page
 import json

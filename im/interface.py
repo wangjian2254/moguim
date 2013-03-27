@@ -3,9 +3,9 @@
 #Time: 下午10:28
 import datetime,time
 import json
-from im.model.models import User,Group, Tag
-from im.groupinterface import infoAllGroup,infoUpdateGroup
-from im.tool import getorAddUser
+from model.models import User,Group, Tag
+from groupinterface import infoAllGroup,infoUpdateGroup
+from tool import getorAddUser
 from setting import APPCODE
 import setting
 from tools.page import Page, getUUID

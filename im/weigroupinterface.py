@@ -2,10 +2,13 @@
 #author:u'王健'
 #Date: 13-3-21
 #Time: 下午6:51
+import json
 import logging
 import urllib
 import datetime
-from im.model.models import WeiNote
+from google.appengine.api import memcache
+from model.models import WeiNote, WeiNoteReplay, WeiNotePoint, WeiUser
+from tool import getorAddUser
 from tools.page import Page
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
@@ -35,7 +38,7 @@ class CreateWeiNote(Page):
         image_list=self.request.get('image_list','')
         author=self.request.get('author','')
         if not groupid or not title or not author:
-            self.flashhtml(resultStr%('fail',u'标题、群号、用户号为必填项',''))
+            self.flashhtml(resultStr%('fail',u'标题、群号、用户号为必填项。',''))
             return
         try:
             if not weinoteid:
@@ -55,9 +58,50 @@ class CreateWeiNote(Page):
             weinote.updateTime=datetime.datetime.utcnow()+timezone
             weinote.put()
             if not weinoteid:
-                self.flashhtml(resultStr%('success',u'发布帖子成功',''))
+                weiNotePoint=WeiNotePoint()
+                weiNotePoint.group=int(groupid)
+                weiUser=WeiUser.get_by_key_name(weinote.author+'-'+str(groupid))
+                if weiUser:
+                    weiNotePoint.point=weiUser.point
+                else:
+                    weiNotePoint.point=0
+                weiNotePoint.put()
+                self.flashhtml(resultStr%('success',u'发布帖子成功。',''))
             else:
-                self.flashhtml(resultStr%('success',u'修改帖子成功',''))
+                self.flashhtml(resultStr%('success',u'修改帖子成功。',''))
+            return
+        except Exception,e:
+            self.flashhtml(resultStr%('fail',u'服务器异常，请稍后再操作。',''))
+            logging.error(str(e))
+            return
+class CreateWeiNoteReplay(Page):
+    '''
+    创建跟帖
+    手机端如果要发表图片，应该在先发布图片再调用此方法。
+
+    '''
+    def post(self):
+        weinoteid=self.request.get('weinoteid','')
+        content=self.request.get('content','')
+        image_list=self.request.get('image_list','')
+        author=self.request.get('author','')
+        if  not content or not weinoteid or not author:
+            self.flashhtml(resultStr%('fail',u'内容、帖子号、用户号为必填项。',''))
+            return
+        try:
+            weinotereplay=WeiNoteReplay()
+            weinotereplay.content=content
+            weinotereplay.note=int(weinoteid)
+            for imageid in image_list.split(','):
+                weinotereplay.image_list.append(int(imageid))
+            if author[0]=='u':
+                weinotereplay.author=author
+            else:
+                weinotereplay.author='u'+author
+            weinotereplay.updateTime=datetime.datetime.utcnow()+timezone
+            weinotereplay.put()
+
+            self.flashhtml(resultStr%('success',u'回复帖子成功。',''))
             return
         except Exception,e:
             self.flashhtml(resultStr%('fail',u'服务器异常，请稍后再操作。',''))
@@ -69,7 +113,33 @@ class ReplayWeiNote(Page):
     1.对跟帖的回复
     2.对回复的回复
     '''
-    def get(self):
+    def post(self):
+        weinotereplayid=self.request.get('weinotereplayid','')
+        content=self.request.get('content','')
+        userid=self.request.get('userid','')
+        to_userid=self.request.get('to_userid','')
+        if not weinotereplayid or not content or not userid:
+            self.flashhtml(resultStr%('fail',u'内容、帖子号、用户号为必填项。',''))
+            return
+        try:
+            replay={'userid':userid,'to_userid':to_userid,'content':content,'updateTime':datetime.datetime.utcnow()+timezone}
+            weinotereplay=WeiNoteReplay.get_by_id(int(weinotereplayid))
+            if weinotereplay:
+                weinotereplay.replay.append(json.dumps(replay))
+                weinotereplay.put()
+                memcache.set('weinotereplayid'+str(weinotereplay.key().id()),weinotereplay,36000)
+                self.flashhtml(resultStr%('success',u'回复帖子成功。',''))
+                return
+            else:
+                self.flashhtml(resultStr%('fail',u'回复失败，帖子不存在。',''))
+                return
+        except Exception,e:
+            self.flashhtml(resultStr%('fail',u'服务器异常，请稍后再操作。',''))
+            logging.error(str(e))
+            return
+#        username=self.request.get('username','')
+#        to_username=self.request.get('to_username','')
+
         pass
 
 class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
@@ -82,10 +152,10 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         self.redirect('/serve/%s' % blob_info.key())
 
 class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
-  def get(self, resource):
-    resource = str(urllib.unquote(resource))
-    blob_info = blobstore.BlobInfo.get(resource)
-    self.send_blob(blob_info)
+    def get(self, resource):
+        resource = str(urllib.unquote(resource))
+        blob_info = blobstore.BlobInfo.get(resource)
+        self.send_blob(blob_info)
 
 
 class QueryWeiNote(Page):
@@ -96,7 +166,20 @@ class QueryWeiNote(Page):
     分页显示
     '''
     def get(self):
-        pass
+        groupid=self.request.get('groupid','')
+        weinoteid=self.request.get('weinoteid','')
+        weinotereplayid=self.request.get('weinotereplayid','')
+        start=self.request.get('start',0)
+        limit=self.request.get('limit',20)
+        start=int(start)
+        limit=int(limit)
+        if groupid:
+
+            return
+        if weinoteid:
+            return
+        if weinotereplayid:
+            return
 
 
 class DoWeiNote(Page):
