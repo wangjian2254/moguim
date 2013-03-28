@@ -1,6 +1,7 @@
 #coding=utf-8
 #Date: 11-12-8
 #Time: 下午10:28
+from xml.dom.minidom import Document
 from google.appengine.api import memcache
 from model.models import User, UserPoint, GuPiaoNote, NewRSSList
 from tools.page import Page
@@ -106,3 +107,39 @@ def getNewRssList():
         newrsslist=NewRSSList.get_by_key_name('newrsslist')
         memcache.set('newrsslist',newrsslist,360000)
     return newrsslist
+
+
+def queryWeiNoteXmlDic(contents,xml=None,datas=None,delete=None):
+    if not xml:
+        xml=Document()
+        datas=xml.createElement('datas')
+        #datas.setAttribute('time','%s' %time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
+#        datas.setAttribute('type','infoall')
+        xml.appendChild(datas)
+    for c in contents:
+        if not c:
+            continue
+        data=xml.createElement('data')
+        if not delete and c['status']=='1':
+            data.setAttribute('code',c['code'] or '')
+            data.setAttribute('father',c['father'] or '')
+            if c.has_key('title'):
+                data.setAttribute('title',c['title'] or '')
+            if c.has_key('updateSpanTime'):
+                data.setAttribute('updateSpanTime',c['updateSpanTime'] or '')
+            if c.has_key('replyType'):
+                data.setAttribute('replyType',c['replyType'] or '')
+            data.setAttribute('maincode',c['maincode'] or '')
+            data.setAttribute('level',c['level'] or '')
+            data.appendChild(xml.createTextNode(c['content'] or ''))
+            data.setAttribute('status',c['status'] or '')
+            if c.has_key('lastUpdateTime'):
+                data.setAttribute('lastUpdateTime',str(c['lastUpdateTime']) or '')
+        else:
+            if type(c) is str:
+                data.setAttribute('code',c)
+            else:
+                data.setAttribute('code',c['code'] or '')
+            data.setAttribute('status','0' or '')
+        datas.appendChild(data)
+    return (xml,datas)
