@@ -7,7 +7,7 @@ import time
 import uuid
 #import im.model.models
 from model.models import Tag, Group, Note, Replay, User, MecacheNote, Img, HoTNote, AdNote, RssNote, RssImg, DaTingNote, PaiMai
-from tool import getorAddUser, doUserPoint, addNeedSyncGuPiao, getGuPiaoNote, addGuPiaoImage, getNewRssList
+from tool import getorAddUser,getNickName, doUserPoint, addNeedSyncGuPiao, getGuPiaoNote, addGuPiaoImage, getNewRssList
 import setting
 from tools.page import Page
 import json
@@ -323,7 +323,7 @@ class CreateNote(Page):
                     self.response.out.write('2')
                     return
             elif group.type==2:
-                if username!=group.author and username!=note.author:
+                if username!=group.author and username!=group.author:
                     self.response.out.write('2')
                     return
             if mod=='add':
@@ -1072,20 +1072,22 @@ def getTagName(id):
         else:
             return ''
 
-def getNickName(id):
-    name=memcache.get('nick'+str(id))
-    if '000'==id:
-        return '蘑菇系统'
-    if name:
-        return name
-    else:
-        name=User.get_by_key_name('u'+str(id))
-        if name:
-            name=name.nickname
-            memcache.set('nick'+str(id),name,3600)
-            return name
-        else:
-            return ''
+# def getNickName(id):
+#     if id[0]!='u':
+#         id=id[1:]
+#     name=memcache.get('nick'+str(id))
+#     if '000'==id:
+#         return '蘑菇系统'
+#     if name:
+#         return name
+#     else:
+#         name=User.get_by_key_name('u'+str(id))
+#         if name:
+#             name=name.nickname
+#             memcache.set('nick'+str(id),name,3600)
+#             return name
+#         else:
+#             return ''
 
 class ShowImg(Page):
     def get(self):
