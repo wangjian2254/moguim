@@ -256,12 +256,16 @@ class DoWeiNote(Page):
     所有操作都消耗积分
     '''
     def get(self):
-        pass
+        noteid=self.request.get('noteid','')
+        userName=self.request.get("UserName")
+        dotype=self.request.get('dotype')
+
 
 class GroupUserInfo(Page):
     '''
     1.用户积分信息查询（根据群查）
     '''
     def get(self):
-        pass
+        groupid=self.request.get('groupid','')
+        userName=self.request.get("UserName")
 
