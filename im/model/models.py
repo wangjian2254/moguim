@@ -250,8 +250,8 @@ class WeiGuPiaoLog(db.Model):
 
     '''
     group = db.IntegerProperty(verbose_name=u'群id')
-    date = db.StringProperty(verbose_name=u'日期')
-    price = db.IntegerProperty(indexed=False, verbose_name=u'收市价格')
+    price1 = db.IntegerProperty(indexed=False, verbose_name=u'买涨pk值')
+    price2 = db.IntegerProperty(indexed=False, verbose_name=u'买跌pk值')
 
 
 class WeiGuPiaoUserLog(db.Model):
@@ -261,8 +261,7 @@ class WeiGuPiaoUserLog(db.Model):
     '''
     group = db.IntegerProperty(verbose_name=u'群id')
     user = db.StringProperty(verbose_name=u'用户')
-    date = db.StringProperty(verbose_name=u'日期')
-    price = db.IntegerProperty(verbose_name=u'PK价格价格')
+    price = db.IntegerProperty(verbose_name=u'PK时价格')
     type = db.StringProperty(verbose_name=u'PK方式')
-    check = db.BooleanProperty(default=False, verbose_name=u'是否经过处理')
+
 
