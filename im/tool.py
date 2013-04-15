@@ -3,7 +3,7 @@
 #Time: 下午10:28
 from xml.dom.minidom import Document
 from google.appengine.api import memcache
-from model.models import User, UserPoint, GuPiaoNote, NewRSSList, WeiNotePoint
+from model.models import User, UserPoint, GuPiaoNote, NewRSSList, WeiNotePoint, WeiUser
 from tools.page import Page
 
 __author__ = u'王健'
@@ -32,7 +32,7 @@ def getNickName(uid):
             memcache.set('nick' + str(uid), name, 3600)
             return name
         else:
-            return ''
+            return uid
 
 
 def getorAddUserPoint(uname):
@@ -184,3 +184,34 @@ def getWeiNotePoint(id):
         memcache.set('WeiNotePoint' + str(id), weiNotePoint, 360000)
 
     return weiNotePoint
+
+
+def setWeiUser(weiUser):
+    memcache.set('WeiUser' + str(weiUser.user) + 'Group' + str(weiUser.group), weiUser, 360000)
+
+
+def getWeiUser(uid, groupid):
+    '''
+    '''
+    if type(uid) == type(1) or 'u' != uid[0]:
+        uid = 'u' + str(uid)
+    weiUser = memcache.get('WeiUser' + uid + 'Group' + str(groupid))
+    if not weiUser:
+        weiUser = WeiUser.get_by_key_name(uid + '-' + str(groupid))
+        memcache.set('WeiUser' + uid + 'Group' + str(groupid), weiUser, 360000)
+    return weiUser
+
+
+def doWeiNotePoint(username,do,num,weinotepoint):
+    '''
+
+    '''
+    if '+' == do:
+        weinotepoint.point+=num
+        weinotepoint.up+=num
+    if '-' == do:
+        weinotepoint.point-=num
+        weinotepoint.down+=num
+    weinotepoint.put()
+    setWeiNotePoint(weinotepoint)
+

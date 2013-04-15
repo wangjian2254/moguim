@@ -9,13 +9,14 @@ import datetime
 from google.appengine.api import memcache
 from model.models import WeiNote, WeiNoteReplay, WeiNotePoint, WeiUser, WeiShouCang
 import setting
-from tool import getorAddUser, queryWeiNoteXmlDic, setWeiNotePoint, getWeiNotePoint, getNickName
+from tool import getorAddUser, queryWeiNoteXmlDic, setWeiNotePoint, getWeiNotePoint, getNickName, getWeiUser, doWeiNotePoint
 from tools.page import Page
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 
 
 timezone=datetime.timedelta(hours =8)
+timezone12=datetime.timedelta(hours =12)
 percode=setting.APPCODE +'-s6-0'
 weiNoteReplayType='60'#微论坛帖子
 weiNoteReplayReplayType='61'#微论坛帖子跟帖，跟帖的跟帖
@@ -66,7 +67,7 @@ class CreateWeiNote(Page):
             if not weinoteid:
                 weiNotePoint=WeiNotePoint(key_name='n%s'%weinote.key().id())
                 weiNotePoint.group=int(groupid)
-                weiUser=WeiUser.get_by_key_name(weinote.author+'-'+str(groupid))
+                weiUser=getWeiUser(weinote.author,str(groupid))
                 if weiUser:
                     weiNotePoint.point=weiUser.point
                 else:
@@ -131,7 +132,7 @@ class ReplayWeiNote(Page):
             self.flashhtml(resultStr%('fail',u'内容、帖子号、用户号为必填项。',''))
             return
         try:
-            replay={'userid':userid,'to_userid':to_userid,'content':content,'updateTime':datetime.datetime.utcnow()+timezone}
+            replay={'author':userid,'to_userid':to_userid,'content':content,'updateTime':datetime.datetime.utcnow()+timezone}
             weinotereplay=WeiNoteReplay.get_by_id(int(weinotereplayid))
             if weinotereplay:
                 weinotereplay.replay.append(json.dumps(replay))
@@ -210,44 +211,62 @@ class QueryWeiNote(Page):
             for note in query:
                 if note:
                     notepoint=getWeiNotePoint(note.key().id())
-                    jsoncontent={'content':note.content,'noteid':note.key().id(),'title':note.title,'up':0,'down':0,'point':0,'author':note.author,'username':getNickName(note.author)}
+                    jsoncontent={'type':'note','content':note.content,'noteid':note.key().id(),'title':note.title,'up':0,'down':0,'point':0,'author':note.author,'username':getNickName(note.author),'groupid':note.group,'replayType':weiNoteReplayType,'lastUpdateTime':note.updateTime}
                     if notepoint:
                         jsoncontent['up']=notepoint.up
                         jsoncontent['down']=notepoint.down
                         jsoncontent['point']=notepoint.point
-                    contents.append({'code':percode+groupid+'-%s%s'%(type,note.key().id()),'father':percode+groupid,'maincode':setting.APPCODE,'level':'102','title':note.title,'content':json.dumps(jsoncontent),'replayType':weiNoteReplayType,'lastUpdateTime':note.updateTime,'status':'1'})
-            xml,dates=queryWeiNoteXmlDic(contents)
-            return self.flashhtml(xml.toxml('utf-8'))
+                    contents.append(jsoncontent)
+                    #contents.append({'code':percode+groupid+'-%s%s'%(type,note.key().id()),'father':percode+groupid,'maincode':setting.APPCODE,'level':'102','title':note.title,'content':json.dumps(jsoncontent),'replayType':weiNoteReplayType,'lastUpdateTime':note.updateTime,'status':'1'})
+            # xml,dates=queryWeiNoteXmlDic(contents)
+            # return self.flashhtml(xml.toxml('utf-8'))
+            return self.flashhtml(json.dumps({'notelist':contents}))
         if weinoteid:
-            contents=[]
+            notelist=[]
+            # notereplaylist=[]
             note=WeiNote.get_by_id(int(weinoteid))
             notepoint=getWeiNotePoint(note.key().id())
-            jsoncontent={'content':note.content,'noteid':note.key().id(),'title':note.title,'up':0,'down':0,'point':0,'author':note.author,'username':getNickName(note.author)}
+            jsoncontent={'type':'note','content':note.content,'noteid':note.key().id(),'title':note.title,'up':0,'down':0,'point':0,'author':note.author,'username':getNickName(note.author),'groupid':note.group,'replayType':weiNoteReplayType,'lastUpdateTime':note.updateTime}
             if notepoint:
                 jsoncontent['up']=notepoint.up
                 jsoncontent['down']=notepoint.down
                 jsoncontent['point']=notepoint.point
-            contents.append({'code':percode+groupid+'-%s'%(note.key().id(),),'father':percode+groupid,'maincode':setting.APPCODE,'level':'102','title':note.title,'content':json.dumps(jsoncontent),'replayType':weiNoteReplayType,'lastUpdateTime':note.updateTime,'status':'1'})
-
+            # contents.append({'code':percode+groupid+'-%s'%(note.key().id(),),'father':percode+groupid,'maincode':setting.APPCODE,'level':'102','title':note.title,'content':json.dumps(jsoncontent),'replayType':weiNoteReplayType,'lastUpdateTime':note.updateTime,'status':'1'})
+            notelist.append(jsoncontent)
             for notereplay in WeiNoteReplay.all().filter('note =',weinoteid).order('updateTime').fetch(limit,start):
-                jsoncontent={'content':notereplay.content,'noteid':notereplay.key().id(),'title':'','up':0,'down':0,'point':0,'author':notereplay.author,'username':getNickName(notereplay.author)}
-                contents.append({'code':percode+groupid+'-%s-%s'%(weinoteid,notereplay.key().id()),'father':percode+groupid+'-%s'%(weinoteid,),'maincode':setting.APPCODE,'level':'103','title':'','content':json.dumps(jsoncontent),'replayType':weiNoteReplayReplayType,'lastUpdateTime':notereplay.updateTime,'status':'1'})
+                jsoncontent={'type':'notereplay','content':notereplay.content,'noteid':notereplay.note,'notereplayid':notereplay.key().id(),'author':notereplay.author,'username':getNickName(notereplay.author),'replayType':weiNoteReplayReplayType,'lastUpdateTime':notereplay.updateTime}
+                notelist.append(jsoncontent)
+                # notereplaylist.append({'code':percode+groupid+'-%s-%s'%(weinoteid,notereplay.key().id()),'father':percode+groupid+'-%s'%(weinoteid,),'maincode':setting.APPCODE,'level':'103','title':'','content':json.dumps(jsoncontent),'replayType':weiNoteReplayReplayType,'lastUpdateTime':notereplay.updateTime,'status':'1'})
                 for i,replay in enumerate( notereplay.replay[:5]):
-                    #jsoncontent={'content':notereplay.content,'noteid':notereplay.key().id(),'title':'','up':0,'down':0,'point':0,'author':notereplay.author,'username':getNickName(notereplay.author)}
-                    contents.append({'code':percode+groupid+'-%s-%s-%s'%(weinoteid,notereplay.key().id(),i),'father':percode+groupid+'-%s-%s'%(weinoteid,notereplay.key().id()),'maincode':setting.APPCODE,'level':'104','title':'','content':replay,'replayType':weiNoteReplayReplayType,'lastUpdateTime':'','status':'1'})
-            xml,dates=queryWeiNoteXmlDic(contents)
-            return self.flashhtml(xml.toxml('utf-8'))
+                    jsoncontent=json.loads(replay)
+                    jsoncontent['type']='notereplayreplay'
+                    jsoncontent['index']=i
+                    jsoncontent['notereplayid']=notereplay.key().id()
+                    jsoncontent['username']=getNickName(jsoncontent['author'])
+                    jsoncontent['to_username']=getNickName(jsoncontent['to_userid'])
+                    notelist.append(jsoncontent)
+                    # jsoncontent={'noteid':notereplay.note,'notereplayid':notereplay.key().id(),'author':notereplay.author,'username':getNickName(notereplay.author),'replayType':weiNoteReplayReplayType}
+                    # contents.append({'code':percode+groupid+'-%s-%s-%s'%(weinoteid,notereplay.key().id(),i),'father':percode+groupid+'-%s-%s'%(weinoteid,notereplay.key().id()),'maincode':setting.APPCODE,'level':'104','title':'','content':replay,'replayType':weiNoteReplayReplayType,'lastUpdateTime':'','status':'1'})
+            # xml,dates=queryWeiNoteXmlDic(contents)
+            return self.flashhtml(json.dumps({'notelist':notelist}))
         if weinotereplayid:
             contents=[]
             notereplay=WeiNoteReplay.get_by_id(int(weinotereplayid))
             weinoteid=notereplay.note
-            jsoncontent={'content':notereplay.content,'noteid':notereplay.key().id(),'title':'','up':0,'down':0,'point':0,'author':notereplay.author,'username':getNickName(notereplay.author)}
-            contents.append({'code':percode+groupid+'-%s-%s'%(weinoteid,notereplay.key().id()),'father':percode+groupid+'-%s'%(weinoteid,),'maincode':setting.APPCODE,'level':'103','title':'','content':json.dumps(jsoncontent),'replayType':weiNoteReplayReplayType,'lastUpdateTime':notereplay.updateTime,'status':'1'})
+            jsoncontent={'type':'notereplay','content':notereplay.content,'noteid':notereplay.note,'notereplayid':notereplay.key().id(),'author':notereplay.author,'username':getNickName(notereplay.author),'replayType':weiNoteReplayReplayType,'lastUpdateTime':notereplay.updateTime}
+            contents.append(jsoncontent)
+            # contents.append({'code':percode+groupid+'-%s-%s'%(weinoteid,notereplay.key().id()),'father':percode+groupid+'-%s'%(weinoteid,),'maincode':setting.APPCODE,'level':'103','title':'','content':json.dumps(jsoncontent),'replayType':weiNoteReplayReplayType,'lastUpdateTime':notereplay.updateTime,'status':'1'})
             for i,replay in enumerate(notereplay.replay):
-                #jsoncontent={'content':notereplay.content,'noteid':notereplay.key().id(),'title':'','up':0,'down':0,'point':0,'author':notereplay.author,'username':getNickName(notereplay.author)}
-                contents.append({'code':percode+groupid+'-%s-%s-%s'%(weinoteid,notereplay.key().id(),i),'father':percode+groupid+'-%s-%s'%(weinoteid,notereplay.key().id()),'maincode':setting.APPCODE,'level':'104','title':'','content':replay,'replayType':weiNoteReplayReplayType,'lastUpdateTime':'','status':'1'})
-            xml,dates=queryWeiNoteXmlDic(contents)
-            return self.flashhtml(xml.toxml('utf-8'))
+                jsoncontent=json.loads(replay)
+                jsoncontent['type']='notereplayreplay'
+                jsoncontent['index']=i
+                jsoncontent['notereplayid']=notereplay.key().id()
+                jsoncontent['username']=getNickName(jsoncontent['author'])
+                jsoncontent['to_username']=getNickName(jsoncontent['to_userid'])
+                contents.append(jsoncontent)
+                # contents.append({'code':percode+groupid+'-%s-%s-%s'%(weinoteid,notereplay.key().id(),i),'father':percode+groupid+'-%s-%s'%(weinoteid,notereplay.key().id()),'maincode':setting.APPCODE,'level':'104','title':'','content':replay,'replayType':weiNoteReplayReplayType,'lastUpdateTime':'','status':'1'})
+            # xml,dates=queryWeiNoteXmlDic(contents)
+            return self.flashhtml(json.dumps({'notelist':contents}))
 
 
 class DoWeiNote(Page):
@@ -257,8 +276,42 @@ class DoWeiNote(Page):
     '''
     def get(self):
         noteid=self.request.get('noteid','')
-        userName=self.request.get("UserName")
+        username=self.request.get("UserName")
         dotype=self.request.get('dotype')
+        if noteid:
+            try:
+                noteid=int(noteid)
+            except Exception,e:
+                logging.info(str(e))
+                self.flashhtml(resultStr%('fail',u'帖子id不正确。',''))
+                return
+        hasdo=memcache.get('u'+username+'doweinotepoint'+str(noteid))#标记用户是否进行过操作
+        if not hasdo:
+            weinotepoint=getWeiNotePoint(noteid)
+            weiUser=getWeiUser(username,weinotepoint.group)
+
+            daynow=datetime.datetime.utcnow().strftime('YYYY-MM-DD')
+            day12=datetime.datetime.strptime(daynow,'YYYY-MM-DD')
+            if weiUser.tempPoint:
+                point_dict=json.dumps(weiUser.tempPoint)
+                if point_dict['date']<datetime.datetime.utcnow()+timezone:
+                    point_dict={'point':weiUser.point,'date':day12+timezone12+timezone12+timezone12}
+            else:
+                point_dict={'point':weiUser.point,'date':day12+timezone12+timezone12+timezone12}
+            if point_dict['point']>=0:
+                if dotype=='down':
+                    doWeiNotePoint(username,'-',1,weinotepoint)
+                    self.flashhtml(resultStr%('success',u'踩帖子成功。',''))
+                if dotype=='up':
+                    doWeiNotePoint(username,'+',1,weinotepoint)
+                    self.flashhtml(resultStr%('success',u'顶帖子成功。',''))
+                memcache.set('u'+username+'doweinotepoint'+str(noteid),True,36000*24)
+            else:
+                self.flashhtml(resultStr%('fail',u'今日可用积分，已经用完。',''))
+
+        else:
+            self.flashhtml(resultStr%('fail',u'每天只能操作帖子一次。',''))
+
 
 
 class GroupUserInfo(Page):
@@ -268,4 +321,10 @@ class GroupUserInfo(Page):
     def get(self):
         groupid=self.request.get('groupid','')
         userName=self.request.get("UserName")
+        weiUser=getWeiUser(userName,groupid)
+        nickname=getNickName(userName)
+        result='{"result":"%s","message":"%s","url":"%s","obj":"%s"}'
+        resultObj={'group':weiUser.group,'userid':weiUser.user,'point':weiUser.point,'tempPoint':weiUser.tempPoint,'nickname':nickname}
+        self.flashhtml(result%('success',u'','',json.dumps(resultObj)))
+
 

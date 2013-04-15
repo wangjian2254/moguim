@@ -209,7 +209,7 @@ class WeiNoteReplay(db.Model):
     image_list = db.ListProperty(item_type=int, indexed=False, verbose_name=u'帖子配图')
     author = db.StringProperty(verbose_name=u'作者')
     replay = db.StringListProperty(indexed=False,verbose_name=u'评论的评论')
-    #{"userid":"","username":"","to_userid":"","to_username":"","updateTime":"","content":""}
+    #{"author":"","username":"","to_userid":"","to_username":"","updateTime":"","content":""}
 
 
 class WeiNotePoint(db.Model):
@@ -224,11 +224,12 @@ class WeiNotePoint(db.Model):
 
 class WeiUser(db.Model):
     '''
-    微论坛的 论坛积分
+    微论坛的 论坛积分 keyname='u123-groupid'
     '''
-    user = db.StringProperty(verbose_name=u'用户')
+    user = db.StringProperty(verbose_name=u'用户')#不带 ‘u’
     group = db.IntegerProperty(verbose_name=u'群id')
     point = db.IntegerProperty(verbose_name=u'群积分')
+    tempPoint=db.StringProperty(verbose_name=u'群积分（每日可使用）',indexed=False)
 
 
 class WeiShouCang(db.Model):
